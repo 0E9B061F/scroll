@@ -1,0 +1,1 @@
+restic forget --prune --keep-daily 7 --keep-monthly 1 -r D:\restic-repo\ --password-file .\key

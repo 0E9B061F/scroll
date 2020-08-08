@@ -1,0 +1,1 @@
+restic snapshots -r D:\restic-repo --password-file .\key
