@@ -1,1 +1,1 @@
-restic snapshots -r D:\restic-repo --password-file .\key
+.\rb.ps1 snapshots $args
