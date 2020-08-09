@@ -1,6 +1,7 @@
-$REPO=Get-Content .\win-repo
-$KEYF=".\key"
-$LOGS="$REPO\WINDOWS-LOGS"
+$REPO=Get-Content .\data\win-repo
+$LOGF=Get-Content .\data\win-logs
+$KEYF=".\data\key"
+$LOGS="$REPO\$LOGF"
 
 restic --verbose `
     -r "$REPO" `

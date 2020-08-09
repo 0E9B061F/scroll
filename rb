@@ -1,17 +1,18 @@
 #!/bin/bash
 
-REPO=`cat ./arch-repo`
-LOGS="${REPO}/ARCH-LOGS"
-KEYF="./key"
+REPO=`cat ./data/arch-repo`
+LOGF=`cat ./data/arch-logs`
+LOGS="${REPO}/${LOGF}"
+KEYF="./data/key"
 
-if [ `whoami` != "root" ]; then
+if [[ `whoami` != "root" ]]; then
   echo "Error: this script must be run as root"
   exit 1
 fi
 
-restic --verbose        \
-  -r $REPO              \
-  --password-file $KEYF \
+restic --verbose            \
+  -r "${REPO}"              \
+  --password-file "${KEYF}" \
   $*
 
 if [[ -z "${SUDO_USER}" ]]; then
