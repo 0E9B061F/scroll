@@ -20,4 +20,4 @@ else
   USER="${SUDO_USER}"
 fi
 
-echo "$(date +%F/%T)/${USER}> ran '$*'" >> "${LOGS}"
+echo "$(date +%F/%T)~${USER}> ran '$*'" >> "${LOGS}"
