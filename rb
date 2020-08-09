@@ -1,7 +1,7 @@
 #!/bin/bash
 
 REPO=`cat ./arch-repo`
-LOGS="${REPO}/LOGS"
+LOGS="${REPO}/ARCH-LOGS"
 KEYF="./key"
 
 if [ `whoami` != "root" ]; then
