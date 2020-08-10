@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./backup-etc.sh
-./backup-nn.sh
+./backup-etc.sh $*
+./backup-nn.sh $*
