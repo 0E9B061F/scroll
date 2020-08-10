@@ -1,0 +1,18 @@
+{
+  "logs": "ARCH-LOGS",
+  "repos": {
+    "A": "/disks/backups-a/restic-repo",
+    "B": "/disks/backups-b/restic-repo"
+  },
+  "backups": {
+    "nn": "/home/nn",
+    "etc": "/etc"
+  },
+  "tags": {
+    "global": ["Arch"],
+    "backups": {
+      "nn": ["nn-backup"],
+      "etc": ["etc-backup"]
+    }
+  }
+}

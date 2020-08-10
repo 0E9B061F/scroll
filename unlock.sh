@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO=`cat ./arch-repo`
+REPO="$1"
 LOCK=$REPO/locks
 
 locks() {

@@ -1,3 +1,5 @@
 Your restic repository password should be placed in a file named `./data/key`
 
 `arch-repo` refers to the repo location on linux, and `win-repo` refers to the same on windows
+
+requires jq
