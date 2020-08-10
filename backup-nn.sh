@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./rb backup                   \
+./backup.sh                   \
   --tag Arch                  \
   --tag nn-backup             \
   --exclude="**/node_modules" \

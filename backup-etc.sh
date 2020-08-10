@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./rb backup        \
+./backup.sh        \
   --tag Arch       \
   --tag etc-backup \
   /etc $*
