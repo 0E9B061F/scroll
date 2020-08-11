@@ -9,6 +9,7 @@ $SOLO=$WILD
 $LOGF=[string](q ".logs")
 $KEYF="./data/key"
 $SAFEMODE=$false
+$FORCE=$false
 
 function perform {
     [string]$name,[string[]]$tail=$args
@@ -110,6 +111,47 @@ function cmd.backup {
     }
   }
 
+  function translate {
+    [string]$native,[string[]]$tail=$args
+    return $native -replace "([a-z]+)=([a-zA-Z0-9]+)","--keep-`$1 `$2" -split " "
+  }
+
+  function cmd.forget {
+    [string[]]$tail=$args
+    $dry=""
+    if ($tail[0] -eq "P" -or $tail[0] -eq "D") {
+        $h,$tail=$tail
+        $dry="--dry-run"
+    }
+    $pairs=@()
+    $bname=$WILD
+    if ($tail.Length -gt 0 -and $tail[0] -ne "") {
+        $bname, $tail=$tail
+    }
+    if ($tail.Length -gt 0 -and $tail[0] -ne "") {
+        $SOLO, $tail=$tail
+        if ($tail.Length -gt 0) {
+            $pairs=translate $tail -join " "
+        }
+    }
+    if ($bname -eq $WILD) {
+        $names=q ".backups | keys | .[]"
+        if (-not $FORCE -and $dry -eq "") {
+            Read-Host "Confirm forget operation: ENTER to confirm, ctrl+c to exit"
+        }
+        ForEach ($name in $names) {
+            $path=q ".backups.$name"
+            action "forget" $dry "--path" $path @pairs
+        }
+    } else {
+        $path=[string](q ".backups.$bname")
+        if (-not $FORCE -and $dry -eq "") {
+            Read-Host "Confirm forget operation: ENTER to confirm, ctrl+c to exit"
+        }
+        action "forget" $dry "--path" $path @pairs 
+    }
+  }
+
 function main {
     [string]$CMD, [string[]]$tail = $args
     if ($CMD -eq "S") {
@@ -138,6 +180,11 @@ function main {
         Write-Host "Error: unimplemented on this platform"
     } elseif ($CMD -ceq "backup") {
         cmd.backup @tail
+    } elseif ($CMD -ceq "forget") {
+        cmd.forget @tail
+    } elseif ($CMD -ceq "FORGET") {
+        $FORCE=$true
+        cmd.forget @tail
     } else {
         Write-Host "Error: unknown command '$CMD'"
     }
