@@ -1,0 +1,18 @@
+{
+  "logs": "WINDOWS-LOGS",
+  "repos": {
+    "A": "D:\\restic-repo",
+    "B": "H:\\restic-repo"
+  },
+  "backups": {
+    "user": "C:\\Users\\Leviticus",
+    "docs": "G:\\"
+  },
+  "tags": {
+    "global": ["Windows"],
+    "backups": {
+      "user": ["user-backup"],
+      "docs": ["docs-backup"]
+    }
+  }
+}

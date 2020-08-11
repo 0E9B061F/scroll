@@ -1,1 +1,0 @@
-.\rb.ps1 snapshots $args
