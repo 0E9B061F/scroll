@@ -152,6 +152,10 @@ function cmd.backup {
     }
   }
 
+  function cmd.prune {
+      action "prune"
+  }
+
 function main {
     [string]$CMD, [string[]]$tail = $args
     if ($CMD -eq "S") {
@@ -185,6 +189,11 @@ function main {
     } elseif ($CMD -ceq "FORGET") {
         $FORCE=$true
         cmd.forget @tail
+    } elseif ($CMD -ceq "prune") {
+        if ($tail.Count -gt 0) {
+            $SOLO, $tail = $tail
+        }
+        cmd.prune
     } else {
         Write-Host "Error: unknown command '$CMD'"
     }
