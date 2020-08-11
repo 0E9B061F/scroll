@@ -6,6 +6,19 @@ requires jq
 
 wildcard is '.'
 
+./rb x [ARG1 ARG2 ...]
+    Call restic with the given args. Makes one call to each configured repository.
+    Ex.:
+        ./rb x snapshots
+        ./rb x ls latest
+
+./rb X REPO|WILD [ARG1 ARG2 ...]
+    Call restic with the given args. Operates on the specified REPO, or on all repos if
+    the wildcard is given. Calling `X` with a wildcard is the same as calling `x`.
+    Ex.:
+        ./rb x snapshots
+        ./rb x ls latest
+
 ./rb list [REPO|WILD]
     List snapshots. Optionally you may provide the name of a repository, which may also be the wildcard character.
     If no repository name is given, defaults to all repos.
