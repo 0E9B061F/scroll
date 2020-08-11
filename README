@@ -43,11 +43,22 @@ wildcard is '.'
         ./rb backup . . AUTO     # Mark automatic backups with the AUTO tag to avoid the USER tag
 
 
-./rb forget BACKUP|WILD REPO|WILD POLICY1 [POLICY2] ...
+./rb forget [D|d] BACKUP|WILD REPO|WILD POLICY1 [POLICY2] ...
+    Dereference data in the repository according to a policy. This data is lost but not removed from
+    storage. Use the 'prune' command to free storage space.
+    Policies look like 'monthly=7', 'tag=FOO', 'last=1'. Any restic policy can be used like this.
+    The 'D' or 'd' flag makes `forget` operate in dry run mode. Nothing will be forgotten, instead a
+    list of snapshots that would be kept or forgotten are printed out.
+    By default, `forget` will ask the user to confirm the operation. To avoid this call `FORGET` instead,
+    which enables the force flag.
     Ex.:
-        ./rb forget . . daily=7 monthly=2 # Apply a policy to all backups and all repos
-        ./rb forget X Y hourly=72         # Apply a policy to backup 'X' in repo 'Y'
-        ./rb forget . . tag=FOO monthly=2 # Keep all snapshots tagged 'FOO'
+        ./rb forget . . daily=7 monthly=2  # Apply a policy to all backups and all repos
+        ./rb forget X Y hourly=72          # Apply a policy to backup 'X' in repo 'Y'
+        ./rb forget . . tag=FOO monthly=2  # Keep all snapshots tagged 'FOO'
+
+.rb FORGET ...
+    Like `forget` but suppresses the required user confirmation of `forget`. Should be used in
+    automated scripts.
 
 ./rb prune [REPO|WILD]
     Remove unused data from one or more repos
@@ -62,3 +73,9 @@ wildcard is '.'
     Ex.:
         ./rb restore . A /tmp/restore
         ./rb restore home B /home
+
+./rb S COMMAND ...
+    Prepend any command with 'S' or 's' to enable safe mode. In safe mode no calls to restic
+    will be made. Instead, the command line arguments that would have been sent to restic
+    are printed to the console. This has no effect on commands such as 'repos', 'logs', or
+    'unlock', which don't call on restic.
