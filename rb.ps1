@@ -109,14 +109,14 @@ function cmd.backup {
     } else {
         cmd.backup.inner $bname @gtag @atag
     }
-  }
+}
 
-  function translate {
+function translate {
     [string]$native,[string[]]$tail=$args
     return $native -replace "([a-z]+)=([a-zA-Z0-9]+)","--keep-`$1 `$2" -split " "
-  }
+}
 
-  function cmd.forget {
+function cmd.forget {
     [string[]]$tail=$args
     $dry=""
     if ($tail[0] -eq "P" -or $tail[0] -eq "D") {
@@ -150,11 +150,28 @@ function cmd.backup {
         }
         action "forget" $dry "--path" $path @pairs 
     }
-  }
+}
 
-  function cmd.prune {
-      action "prune"
-  }
+function cmd.prune {
+    action "prune"
+}
+
+function cmd.restore {
+    [string[]]$tail=$args
+    $bname, $tail=$tail
+    $repo, $tail=$tail
+    $target, $tail=$tail
+    if ($bname -eq $WILD) {
+        $names=q ".backups | keys | .[]"
+        ForEach ($name in $names) {
+            $path=q ".backups.$name"
+            perform $repo "restore" "latest" "--target" $target "--path" $path
+        }
+    } else {
+        $path=q ".backups.$bname"
+        perform $repo "restore" "latest" "--target" $target "--path" $path
+    }
+}
 
 function main {
     [string]$CMD, [string[]]$tail = $args
@@ -194,6 +211,8 @@ function main {
             $SOLO, $tail = $tail
         }
         cmd.prune
+    } elseif ($CMD -ceq "restore") {
+        cmd.restore @tail
     } else {
         Write-Host "Error: unknown command '$CMD'"
     }

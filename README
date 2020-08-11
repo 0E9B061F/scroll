@@ -3,3 +3,62 @@ Your restic repository password should be placed in a file named `./data/key`
 `arch-repo` refers to the repo location on linux, and `win-repo` refers to the same on windows
 
 requires jq
+
+wildcard is '.'
+
+./rb list [REPO|WILD]
+    List snapshots. Optionally you may provide the name of a repository, which may also be the wildcard character.
+    If no repository name is given, defaults to all repos.
+    Ex.:
+        ./rb list
+        ./rb list Foo
+        ./rb list .
+
+./rb repos
+    List all configured restic repositiories.
+    Ex.:
+        ./rb repos
+
+./rb backups
+    List all configured backups.
+    Ex.:
+        ./rb backups
+
+./rb logs [REPO|WILD]
+    Print logs. You may provide a repository name, which may be the wildcard character. If no name is given,
+    defaults to all repos.
+    Ex.:
+        ./rb logs
+        ./rb logs test
+        ./rb logs .
+
+./rb backup [BACKUP|WILD] [REPO|WILD] [TAG1] [TAG2] ...
+    Ex.:
+        ./rb backup              # Runs all backups to all repositories
+        ./rb backup . .          # Runs all backups to all repositories   
+        ./rb backup X .          # Run backup 'X' to all repos
+        ./rb backup . Y          # Run all backups to repo 'Y'
+        ./rb backup X Y          # Run backups 'X' to repo 'Y'
+        ./rb backup . . FOO BAR  # Run all backups, tagging the snapshots with 'FOO' and 'BAR'
+        ./rb backup . . AUTO     # Mark automatic backups with the AUTO tag to avoid the USER tag
+
+
+./rb forget BACKUP|WILD REPO|WILD POLICY1 [POLICY2] ...
+    Ex.:
+        ./rb forget . . daily=7 monthly=2 # Apply a policy to all backups and all repos
+        ./rb forget X Y hourly=72         # Apply a policy to backup 'X' in repo 'Y'
+        ./rb forget . . tag=FOO monthly=2 # Keep all snapshots tagged 'FOO'
+
+./rb prune [REPO|WILD]
+    Remove unused data from one or more repos
+    Ex.:
+        ./rb prune
+        ./rb prune .
+        ./rb prune X
+
+./rb restore BACKUP|WILD REPO PATH
+    Restore one or more backups from REPO to PATH
+    REPO cannot be the wildcard character (backups must be restored from one specific repo)
+    Ex.:
+        ./rb restore . A /tmp/restore
+        ./rb restore home B /home
