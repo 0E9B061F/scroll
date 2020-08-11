@@ -10,6 +10,8 @@ $LOGF=[string](q ".logs")
 $KEYF="./data/key"
 $SAFEMODE=$false
 $FORCE=$false
+$AUTOMODE=$false
+$USRN=$env:USERNAME
 
 function perform {
     [string]$name,[string[]]$tail=$args
@@ -21,8 +23,13 @@ function perform {
             -r "${repo}" `
             --password-file "${KEYF}" `
             @tail
-        $tag=Get-Date -UFormat "%Y-%m-%d/%T>"
-        Add-Content -Path "$repo\$LOGF" -Value "$tag ran '$tail'"
+        if ($AUTOMODE) {
+            $auto="AUTO"
+        } else {
+            $auto="USER"
+        }
+        $tag=Get-Date -UFormat "%Y-%m-%d/%T~$USRN/$auto>"
+        Add-Content -Path "$repo\$LOGF" -Value "$tag $tail"
     }
 }
 
@@ -78,10 +85,14 @@ function cmd.backup.inner {
     $path=[string](q ".backups.$name")
     $btag=q ".tags.backups.$name[]"
     $btag=($btag | % {"--tag " + $_}) -join " " -split " "
-    $utag=@()
-    $auto="$tail $btag" -match "--tag AUTO"
-    if (-Not $auto) {
+    if ($AUTOMODE) {
+        $utag=@("--tag", "AUTO")
+    } else {
         $utag=@("--tag", "USER")
+    }
+    $dupe="$tail $btag" -match ($utag -join " ")
+    if ($dupe) {
+        $utag=@()
     }
     action "backup" @utag @btag @tail $path
 }
@@ -177,6 +188,9 @@ function main {
     [string]$CMD, [string[]]$tail = $args
     if ($CMD -eq "S") {
         $SAFEMODE=$true
+        main @tail
+    } elseif ($CMD -eq "A") {
+        $AUTOMODE=$true
         main @tail
     } elseif ($CMD -ceq "x") {
         action @tail

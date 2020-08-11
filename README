@@ -6,6 +6,11 @@ requires jq
 
 wildcard is '.'
 
+./rb A COMMAND ...
+    Auto mode. Should be used in any automated scripts. Automatic actions will be noted as
+    such in logs and automated backups will be tagged as such. Conversely, user actions
+    (those without use of the 'A' flag) are marked and tagged as 'USER'.
+
 ./rb x [ARG1 ARG2 ...]
     Call restic with the given args. Makes one call to each configured repository.
     Ex.:
