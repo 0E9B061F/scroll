@@ -17,7 +17,7 @@ function perform {
     [string]$name,[string[]]$tail=$args
     $repo=[string](q ".repos.$name")
     if ($SAFEMODE) {
-        Write-Host "SAFEMODE: $tail"
+        Write-Output "SAFEMODE: $tail"
     } else {
         restic --verbose `
             -r "${repo}" `
@@ -54,7 +54,7 @@ function cmd.repos {
     for ($n=0; $n -lt $names.Length; $n++) {
         $name=$names[$n]
         $rpath=[string](q ".repos.${name}")
-        Write-Host "${n}: $name ($rpath)"
+        Write-Output "${n}: $name ($rpath)"
     }
 }
 
@@ -63,7 +63,7 @@ function cmd.backups {
     for ($n=0; $n -lt $names.Length; $n++) {
         $name=$names[$n]
         $rpath=[string](q ".backups.${name}")
-        Write-Host "${n}: $name ($rpath)"
+        Write-Output "${n}: $name ($rpath)"
     }
 }
 
@@ -159,7 +159,7 @@ function cmd.forget {
         if (-not $FORCE -and $dry -eq "") {
             Read-Host "Confirm forget operation: ENTER to confirm, ctrl+c to exit"
         }
-        action "forget" $dry "--path" $path @pairs 
+        action "forget" $dry "--path" $path @pairs
     }
 }
 
@@ -212,7 +212,7 @@ function main {
         }
         cmd.logs
     } elseif ($CMD -ceq "unlock") {
-        Write-Host "Error: unimplemented on this platform"
+        Write-Output "Error: unimplemented on this platform"
     } elseif ($CMD -ceq "backup") {
         cmd.backup @tail
     } elseif ($CMD -ceq "forget") {
@@ -228,7 +228,7 @@ function main {
     } elseif ($CMD -ceq "restore") {
         cmd.restore @tail
     } else {
-        Write-Host "Error: unknown command '$CMD'"
+        Write-Output "Error: unknown command '$CMD'"
     }
 }
 
