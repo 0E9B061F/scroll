@@ -28,7 +28,7 @@ function perform {
         } else {
             $auto="USER"
         }
-        $tag=Get-Date -UFormat "%Y-%m-%d/%T~$USRN/$auto>"
+        $tag=Get-Date -UFormat "%Y-%m-%d %T ~$USRN/$auto>"
         Add-Content -Path "$repo\$LOGF" -Value "$tag $tail"
     }
 }
