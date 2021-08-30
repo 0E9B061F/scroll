@@ -6,13 +6,17 @@
   },
   "backups": {
     "nn": "/home/nn",
-    "etc": "/etc"
+    "etc": "/etc",
+    "usrlocal": "/usr/local",
+    "root": "/root"
   },
   "tags": {
     "global": ["Arch"],
     "backups": {
       "nn": ["nn-backup"],
-      "etc": ["etc-backup"]
+      "etc": ["etc-backup"],
+      "usrlocal": ["usrlocal-backup"],
+      "root": ["root-backup"]
     }
   }
 }
