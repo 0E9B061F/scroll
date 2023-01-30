@@ -1,5 +1,5 @@
 pkgname=scroll
-pkgver=0.1.3
+pkgver=0.1.4
 pkgrel=1
 pkgdesc="Backup system based on restic"
 arch=('any')
@@ -14,13 +14,13 @@ source=(
   ${pkgname}-trim.service
   ${pkgname}-trim.timer
 )
-md5sums=('41fb5dd4f224abd23f53889c4489130f'
+md5sums=('c640c692e868d758cabb7069cdcf58a0'
          '5bb2eeeab6eda06837cff1e25d371af7'
          'd41d8cd98f00b204e9800998ecf8427e'
          '319cb73f4567bf22d3ba3d0395fa876c'
          'a4264661c48b61ba3c61452545ba73b6'
          '494ae5a316ff9fbf4d37c4b7414b5cca'
-         '195c6d1eaf67f56d829b0477848d0694')
+         '2832aa708f37ba5b2c5f47a95073fb82')
 backup=(etc/scroll/scroll.yaml etc/scroll/key)
 package() {
   mkdir -p -m=700 $pkgdir/etc/${pkgname}
