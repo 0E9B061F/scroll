@@ -26,7 +26,7 @@ USRNAME="${SUDO_USER}"
 [[ -z "${USRNAME}" ]] && USRNAME=`whoami`
 
 WILD="."
-APPTAGS=("scroll" "sv0.1.1")
+APPTAGS=("scroll" "sv0.1.2")
 
 HOST="$(cat /etc/hostname)"
 SUBHOST="$(q ".subhost // empty")"
@@ -106,7 +106,8 @@ cmd.find() {
   tags+=($(blankwild "${tname}"))
   [[ -n "${SUBHOST}" ]] && tags+=("${SUBHOST}")
   tags="$(echo "${tags[@]}" | sed "s/ /-backup,/g")"
-  eachrepo "${rname}" find --host="${HOST}" --tag="${tags}" $@
+  [[ -n "${tags}" ]] && tags="--tag=${tags}"
+  eachrepo "${rname}" find --host="${HOST}" "${tags}" $@
 }
 
 cmd.restore() {
@@ -119,7 +120,8 @@ cmd.restore() {
   tags+=($(blankwild "${tname}"))
   [[ -n "${SUBHOST}" ]] && tags+=("${SUBHOST}")
   tags="$(echo "${tags[@]}" | sed "s/ /-backup,/g")"
-  eachrepo "${rname}" restore --host="${HOST}" --tag="${tags}" --target="${path}" latest $@
+  [[ -n "${tags}" ]] && tags="--tag=${tags}"
+  eachrepo "${rname}" restore --host="${HOST}" --target="${path}" latest $@
 }
 
 cmd.trim() {
@@ -158,7 +160,8 @@ cmd.list() {
   tags+=($(blankwild "${tname}"))
   [[ -n "${SUBHOST}" ]] && tags+=("${SUBHOST}")
   tags="$(echo "${tags[@]}" | sed "s/ /-backup,/g")"
-  eachrepo "${rname}" snapshots --host="${HOST}" --tag="${tags}" $@
+  [[ -n "${tags}" ]] && tags="--tag=${tags}"
+  eachrepo "${rname}" snapshots --host="${HOST}" "${tags}" $@
 }
 
 cmd.repos() {
