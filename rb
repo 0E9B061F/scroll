@@ -130,7 +130,7 @@ cmd.backup() {
       utag=""
       auto=$(echo "${gtag} ${btag} ${atag}" | grep -- "--tag AUTO")
       [[ -z "${auto}" ]] && utag="--tag USER"
-      action backup "${utag}" "${gtag}" "${btag}" "${atag}" "${path}"
+      action backup --one-file-system "${utag}" "${gtag}" "${btag}" "${atag}" "${path}"
     done
   else
     path=$(q ".backups.${bname}")
@@ -139,7 +139,7 @@ cmd.backup() {
     utag=""
     auto=$(echo "${gtag} ${btag} ${atag}" | grep -- "--tag AUTO")
     [[ -z "${auto}" ]] && utag="--tag USER"
-    action backup "${utag}" "${gtag}" "${btag}" "${atag}" "${path}"
+    action backup --one-file-system "${utag}" "${gtag}" "${btag}" "${atag}" "${path}"
   fi
 }
 
