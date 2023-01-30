@@ -1,0 +1,16 @@
+### scroll configuration file
+### 2023 nn <0E9B061F@protonmail.com>
+
+### Don't forget to enter your password in the key file:
+### /etc/scroll/key
+
+### For dual booting, specify the OS as subhost
+# subhost: Arch
+### Define one or more repositories to backup to
+# repos:
+#   local: /backups/restic
+### Define one or more targets to be backed up along with their pruning policies
+# targets:
+#   etc:
+#     path: /etc
+#     policy: --keep-daily 30 --keep-weekly 12 --keep-monthly 6 --keep-yearly 1

@@ -1,0 +1,212 @@
+#!/bin/bash
+
+RCFILE="/etc/scroll/scroll.yaml"
+KEYFILE="/etc/scroll/key"
+LOGFILE="/var/log/scroll/scroll.log"
+
+CONFIG=$(<"${RCFILE}")
+
+q() {
+  yq -r "$*" <<< "${CONFIG}"
+}
+
+supercheck() {
+  if [[ `whoami` != "root" ]]; then
+    echo "Error: this script must be run as root"
+    exit 1
+  fi
+}
+
+tagify() {
+  tags="$*"
+  echo "${tags}" | sed 's/\(\S\+\)/--tag \1/g'
+}
+
+USRNAME="${SUDO_USER}"
+[[ -z "${USRNAME}" ]] && USRNAME=`whoami`
+
+WILD="."
+APPTAGS=("scroll" "sv0.1.0")
+
+HOST="$(hostname)"
+SUBHOST="$(q ".subhost // empty")"
+
+perform() {
+  name="$1"
+  shift 1
+  repo=$(q ".repos.${name}")
+  echo
+  echo ">>> ========================================================================================"
+  echo ">>> Repository \"${name}\""
+  echo ">>> ${repo}"
+  echo ">>> restic --verbose -r "${repo}" --password-file "${KEYFILE}" $@"
+  echo ">>> ========================================================================================"
+  restic --verbose -r "${repo}" --password-file "${KEYFILE}" $@
+  echo "$(date +%F/%T)~${USRNAME}> '$*'" >> "${LOGFILE}"
+}
+
+blankwild() {
+  local name names
+  name="${1}"
+  if [[ "${name}" == "${WILD}" ]] || [[ -z "${name}" ]]; then
+    names=
+  else
+    names="$(echo "${name}" | sed "s/,/ /g")"
+  fi
+  echo "${names}"
+}
+
+resolve() {
+  local prop name names
+  prop="${1}"
+  name="${2}"
+  if [[ "${name}" == "${WILD}" ]] || [[ -z "${name}" ]]; then
+    names="$(q ".${prop} | keys[]")"
+  else
+    names="$(echo "${name}" | sed "s/,/ /g")"
+  fi
+  echo "${names}"
+}
+
+resolve_repo() {
+  local name
+  name="${1}"
+  resolve "repos" "${name}"
+}
+
+resolve_targ() {
+  local name
+  name="${1}"
+  resolve "targets" "${name}"
+}
+
+eachrepo() {
+  local rname rnames repo
+  rname="$1"
+  shift 1
+  rnames=($(resolve_repo "${rname}"))
+  for repo in ${rnames[@]}; do
+    perform "${repo}" ${@}
+  done
+}
+
+cmd.x() {
+  local rname
+  rname="$1"
+  shift 1
+  eachrepo "${rname}" $@
+}
+
+cmd.find() {
+  local tname rname tags
+  tname="$1"
+  rname="$2"
+  shift 2
+  tags=()
+  tags+=($(blankwild "${tname}"))
+  [[ -n "${SUBHOST}" ]] && tags+=("${SUBHOST}")
+  tags="$(echo "${tags[@]}" | sed "s/ /-backup,/g")"
+  eachrepo "${rname}" find --host="${HOST}" --tag="${tags}" $@
+}
+
+cmd.restore() {
+  local tname rname path tags
+  tname="$1"
+  rname="$2"
+  path="$3"
+  shift 3
+  tags=()
+  tags+=($(blankwild "${tname}"))
+  [[ -n "${SUBHOST}" ]] && tags+=("${SUBHOST}")
+  tags="$(echo "${tags[@]}" | sed "s/ /-backup,/g")"
+  eachrepo "${rname}" restore --host="${HOST}" --tag="${tags}" --target="${path}" latest $@
+}
+
+cmd.trim() {
+  local tname rname tags tnames policy
+  tname="$1"
+  rname="$2"
+  shift 2
+  tnames=()
+  tnames+=($(resolve_targ "${tname}"))
+  for target in ${tnames[@]}; do
+    policy=$(q ".targets.${target}.policy")
+    tags="--tag=${target}-backup"
+    [[ -n "${SUBHOST}" ]] && tags+=",${SUBHOST}"
+    eachrepo "${rname}" forget --prune --host="${HOST}" ${tags} ${policy} $@
+  done
+}
+
+cmd.check() {
+  local rname
+  rname="$1"
+  eachrepo "${rname}" check
+}
+
+cmd.unlock() {
+  local rname
+  rname="$1"
+  eachrepo "${rname}" unlock
+}
+
+cmd.list() {
+  local tname rname tags
+  tname="$1"
+  rname="$2"
+  shift 2
+  tags=()
+  tags+=($(blankwild "${tname}"))
+  [[ -n "${SUBHOST}" ]] && tags+=("${SUBHOST}")
+  tags="$(echo "${tags[@]}" | sed "s/ /-backup,/g")"
+  eachrepo "${rname}" snapshots --host="${HOST}" --tag="${tags}" $@
+}
+
+cmd.repos() {
+  q '.repos | to_entries[] | "\(.key): \(.value)"'
+}
+
+cmd.targets() {
+  q '.targets | to_entries[] | "\(.key): \(.value | .path)"'
+}
+
+cmd.backup() {
+  local tname rname tnames rnames gtags ttags path auto target repo tags
+  tname="$1"
+  rname="$2"
+  gtags=(${APPTAGS[@]})
+  [[ -n "${SUBHOST}" ]] && gtags+=("${SUBHOST}")
+  gtags+=($(q ".tags?.global?[]?" | tr "\n" " "))
+  shift 2
+  gtags+=($@)
+  tnames=($(resolve_targ "${tname}"))
+  rnames=($(resolve_repo "${rname}"))
+  auto="$(grep -P "(^| )AUTO" <<< "${gtags[@]}")"
+  [[ -z "${auto}" ]] && gtags+=("USER")
+  for target in ${tnames[@]}; do
+    ttags=(${gtags[@]})
+    ttags+=("${target}-backup")
+    ttags+=($(q ".tags?.targets?.${target}?[]?" | tr "\n" " "))
+    tags=$(tagify ${ttags[@]})
+    path=$(q ".targets.${target}.path")
+    for repo in ${rnames[@]}; do
+      perform "${repo}" backup --one-file-system ${tags} "${path}"
+    done
+  done
+}
+
+cmd.size() {
+  local paths
+  paths=($(q ".targets | to_entries | map(.value | .path) | .[]"))
+  du -d 0 -h -x --total ${paths[@]} 2> /dev/null | tail -n1 | grep --color=never -Po "^\d+[A-Z]"
+}
+
+CMD="$1"
+shift 1
+
+FUNC="cmd.${CMD}"
+
+if [[ $(type -t "${FUNC}") == function ]]; then
+  ${FUNC} ${@}
+else
+  echo "ERROR: no such command (${CMD})"
+fi

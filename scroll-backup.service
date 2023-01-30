@@ -1,0 +1,7 @@
+[Unit]
+Description=Run all scroll backups
+
+[Service]
+Type=oneshot
+WorkingDirectory=/
+ExecStart=/usr/bin/scroll backup . . AUTO

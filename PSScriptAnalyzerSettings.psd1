@@ -1,5 +1,0 @@
-@{
-    ExcludeRules=@('PSAvoidUsingCmdletAliases',
-                   'PSUseDeclaredVarsMoreThanAssignments',
-                   'PSAvoidUsingPositionalParameters')
-}
