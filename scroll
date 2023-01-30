@@ -26,9 +26,9 @@ USRNAME="${SUDO_USER}"
 [[ -z "${USRNAME}" ]] && USRNAME=`whoami`
 
 WILD="."
-APPTAGS=("scroll" "sv0.1.0")
+APPTAGS=("scroll" "sv0.1.1")
 
-HOST="$(hostname)"
+HOST="$(cat /etc/hostname)"
 SUBHOST="$(q ".subhost // empty")"
 
 perform() {
