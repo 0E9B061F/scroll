@@ -1,10 +1,10 @@
 pkgname=scroll
 pkgver=0.1.0
-pkgrel=1
+pkgrel=3
 pkgdesc="Backup system based on restic"
 arch=('any')
 license=('MIT')
-depends=('bash' 'coreutils' 'grep' 'restic')
+depends=('bash' 'coreutils' 'grep' 'restic' 'yq')
 source=(
   $pkgname
   ${pkgname}.yaml
@@ -21,6 +21,7 @@ md5sums=('faa5dda9733058b7e91060b5e24abdd2'
          'a4264661c48b61ba3c61452545ba73b6'
          '494ae5a316ff9fbf4d37c4b7414b5cca'
          '195c6d1eaf67f56d829b0477848d0694')
+backup=(etc/scroll/scroll.yaml etc/scroll/key)
 package() {
   mkdir -p -m=700 $pkgdir/etc/${pkgname}
   mkdir -p $pkgdir/var/log/${pkgname}
