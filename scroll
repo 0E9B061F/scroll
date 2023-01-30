@@ -26,7 +26,7 @@ USRNAME="${SUDO_USER}"
 [[ -z "${USRNAME}" ]] && USRNAME=`whoami`
 
 WILD="."
-APPTAGS=("scroll" "sv0.1.2")
+APPTAGS=("scroll" "sv0.1.3")
 
 HOST="$(cat /etc/hostname)"
 SUBHOST="$(q ".subhost // empty")"
@@ -200,7 +200,7 @@ cmd.backup() {
 cmd.size() {
   local paths
   paths=($(q ".targets | to_entries | map(.value | .path) | .[]"))
-  du -d 0 -h -x --total ${paths[@]} 2> /dev/null | tail -n1 | grep --color=never -Po "^\d+[A-Z]"
+  du -d 0 -h -x --total ${paths[@]} 2> /dev/null | tail -n1 | grep --color=never -Po "^\S+"
 }
 
 CMD="$1"
