@@ -1,5 +1,7 @@
 #!/bin/bash
 
+VERSION="0.1.5"
+
 RCFILE="/etc/scroll/scroll.yaml"
 KEYFILE="/etc/scroll/key"
 LOGFILE="/var/log/scroll/scroll.log"
@@ -26,7 +28,7 @@ USRNAME="${SUDO_USER}"
 [[ -z "${USRNAME}" ]] && USRNAME=`whoami`
 
 WILD="."
-APPTAGS=("scroll" "sv0.1.4")
+APPTAGS=("scroll" "sv${VERSION}")
 
 HOST="$(cat /etc/hostname)"
 SUBHOST="$(q ".subhost // empty")"
@@ -90,24 +92,66 @@ eachrepo() {
   done
 }
 
+consume() {
+  local tname tags
+  tname="$1"
+  tags=()
+  tags+=($(blankwild "${tname}"))
+  out=()
+  for u in "${tags[@]}"; do
+    u="${u}-backup"
+    [[ -n "${SUBHOST}" ]] && u="${u},${SUBHOST}"
+    out+=("--tag=${u}")
+  done
+  echo "${out[@]}"
+}
+
+usage() {
+  local cmd
+  cmd="${1}"
+  sigcmd="sig.${cmd}"
+  helpcmd="help.${cmd}"
+  out="${cmd}"
+  if [[ $(type -t "${sigcmd}") == function ]]; then
+    info="$("${sigcmd}")"
+    out="${out} ${info}"
+  fi
+  if [[ $(type -t "${helpcmd}") == function ]]; then
+    info="$("${helpcmd}")"
+    out="${out}\n  ${info}"
+  fi
+  echo -e "${out}"
+}
+
 cmd.x() {
   local rname
   rname="$1"
-  shift 1
+  [[ -n "${rname}" ]] && shift
   eachrepo "${rname}" $@
 }
+sig.x() {
+  echo "[REPO] [ARG...]"
+}
+help.x() {
+  echo "Execute arbitrary restic commands for the given REPO."
+}
+
+# scroll t:boot,root h:Arkady
 
 cmd.find() {
   local tname rname tags
   tname="$1"
   rname="$2"
-  shift 2
-  tags=()
-  tags+=($(blankwild "${tname}"))
-  [[ -n "${SUBHOST}" ]] && tags+=("${SUBHOST}")
-  tags="$(echo "${tags[@]}" | sed "s/ /-backup,/g")"
-  [[ -n "${tags}" ]] && tags="--tag=${tags}"
+  [[ -n "${tname}" ]] && shift
+  [[ -n "${rname}" ]] && shift
+  tags="$(consume "${tname}")"
   eachrepo "${rname}" find --host="${HOST}" "${tags}" $@
+}
+sig.find() {
+  echo "TARGET REPO PATH [PATH...]"
+}
+help.find() {
+  echo "Search for snapshots containing one or more PATHs in the given TARGET and REPO."
 }
 
 cmd.restore() {
@@ -116,19 +160,37 @@ cmd.restore() {
   rname="$2"
   path="$3"
   shift 3
-  tags=()
-  tags+=($(blankwild "${tname}"))
-  [[ -n "${SUBHOST}" ]] && tags+=("${SUBHOST}")
-  tags="$(echo "${tags[@]}" | sed "s/ /-backup,/g")"
-  [[ -n "${tags}" ]] && tags="--tag=${tags}"
-  eachrepo "${rname}" restore --host="${HOST}" --target="${path}" latest $@
+  if [[ -z "${tname}" ]]; then
+    echo "ERROR: must provide a target to restore"
+    usage restore
+    exit 1
+  fi
+  if [[ -z "${rname}" ]] || [[ ${rname} == "${WILD}" ]]; then
+    echo "ERROR: must provide a repo name"
+    usage restore
+    exit 1
+  fi
+  if [[ -z "${path}" ]]; then
+    echo "ERROR: must provide a path to restore to"
+    usage restore
+    exit 1
+  fi
+  tags="$(consume "${tname}")"
+  perform "${rname}" restore --host="${HOST}" --target="${path}" "${tags}" latest $@
+}
+sig.restore() {
+  echo "TARGET REPO PATH"
+}
+help.restore() {
+  echo "Restore the given TARGET from REPO to PATH."
 }
 
 cmd.trim() {
   local tname rname tags tnames policy
   tname="$1"
   rname="$2"
-  shift 2
+  [[ -n "${tname}" ]] && shift
+  [[ -n "${rname}" ]] && shift
   tnames=()
   tnames+=($(resolve_targ "${tname}"))
   for target in ${tnames[@]}; do
@@ -138,11 +200,23 @@ cmd.trim() {
     eachrepo "${rname}" forget --prune --host="${HOST}" ${tags} ${policy} $@
   done
 }
+sig.trim() {
+  echo "[TARGET] [REPO]"
+}
+help.trim() {
+  echo "Forget and prune snapshots for TARGET in REPO."
+}
 
 cmd.check() {
   local rname
   rname="$1"
   eachrepo "${rname}" check
+}
+sig.check() {
+  echo "[REPO]"
+}
+help.check() {
+  echo "Check the integrity of REPO."
 }
 
 cmd.unlock() {
@@ -150,26 +224,41 @@ cmd.unlock() {
   rname="$1"
   eachrepo "${rname}" unlock
 }
+sig.unlock() {
+  echo "[REPO]"
+}
+help.unlock() {
+  echo "Unlock REPO."
+}
 
 cmd.list() {
   local tname rname tags
   tname="$1"
   rname="$2"
-  shift 2
-  tags=()
-  tags+=($(blankwild "${tname}"))
-  [[ -n "${SUBHOST}" ]] && tags+=("${SUBHOST}")
-  tags="$(echo "${tags[@]}" | sed "s/ /-backup,/g")"
-  [[ -n "${tags}" ]] && tags="--tag=${tags}"
+  [[ -n "${tname}" ]] && shift
+  [[ -n "${rname}" ]] && shift
+  tags="$(consume "${tname}")"
   eachrepo "${rname}" snapshots --host="${HOST}" "${tags}" $@
+}
+sig.list() {
+  echo "[TARGET] [REPO]"
+}
+help.list() {
+  echo "List snapshots for the given target and repo, or all repos and targets if these are not given."
 }
 
 cmd.repos() {
   q '.repos | to_entries[] | "\(.key): \(.value)"'
 }
+help.repos() {
+  echo "List all configured repos."
+}
 
 cmd.targets() {
   q '.targets | to_entries[] | "\(.key): \(.value | .path)"'
+}
+help.targets() {
+  echo "List all configured targets."
 }
 
 cmd.backup() {
@@ -196,11 +285,30 @@ cmd.backup() {
     done
   done
 }
+sig.backup() {
+  echo "[TARGET] [REPO] [TAG...]"
+}
+help.backup() {
+  echo "Backup TARGET to REPO. Optionally provide additional TAGs."
+}
 
 cmd.size() {
   local paths
   paths=($(q ".targets | to_entries | map(.value | .path) | .[]"))
   du -d 0 -h -x --total ${paths[@]} 2> /dev/null | tail -n1 | grep --color=never -Po "^\S+"
+}
+help.size() {
+  echo "Calculate the total size of the configured targets."
+}
+
+cmd.help() {
+  list="$(declare -F | grep -Eo "cmd\..+$" | grep -Eo "[^.]+$")"
+  while IFS= read -r cmd; do
+    usage "${cmd}"
+  done <<< "$list"
+}
+help.help() {
+  echo "Display this help info."
 }
 
 CMD="$1"
@@ -208,8 +316,14 @@ shift 1
 
 FUNC="cmd.${CMD}"
 
-if [[ $(type -t "${FUNC}") == function ]]; then
+echo "scroll ${VERSION}"
+
+if [[ -z "${CMD}" ]]; then
+  cmd.help
+elif [[ $(type -t "${FUNC}") == function ]]; then
   ${FUNC} ${@}
 else
   echo "ERROR: no such command (${CMD})"
+  echo
+  cmd.help
 fi
