@@ -1,5 +1,5 @@
 pkgname=scroll
-pkgver=0.1.4
+pkgver=0.1.5
 pkgrel=1
 pkgdesc="Backup system based on restic"
 arch=('any')
@@ -14,7 +14,7 @@ source=(
   ${pkgname}-trim.service
   ${pkgname}-trim.timer
 )
-md5sums=('c640c692e868d758cabb7069cdcf58a0'
+md5sums=('10a8bf6e41aba1772f11dd5512093bf3'
          '5bb2eeeab6eda06837cff1e25d371af7'
          'd41d8cd98f00b204e9800998ecf8427e'
          '319cb73f4567bf22d3ba3d0395fa876c'
