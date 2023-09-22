@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.1.5"
+VERSION="0.1.6"
 
 RCFILE="/etc/scroll/scroll.yaml"
 KEYFILE="/etc/scroll/key"
@@ -10,13 +10,6 @@ CONFIG=$(<"${RCFILE}")
 
 q() {
   yq -r "$*" <<< "${CONFIG}"
-}
-
-supercheck() {
-  if [[ `whoami` != "root" ]]; then
-    echo "Error: this script must be run as root"
-    exit 1
-  fi
 }
 
 tagify() {
