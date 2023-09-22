@@ -14,7 +14,7 @@ source=(
   ${pkgname}-trim.service
   ${pkgname}-trim.timer
 )
-md5sums=('c9f8688d48c8e8fa487b86df14bbaff2'
+md5sums=('11570abbb6c0bd073e94b970d0a56242'
          '5bb2eeeab6eda06837cff1e25d371af7'
          'd41d8cd98f00b204e9800998ecf8427e'
          '319cb73f4567bf22d3ba3d0395fa876c'
