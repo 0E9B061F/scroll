@@ -96,7 +96,11 @@ consume() {
     [[ -n "${SUBHOST}" ]] && u="${u},${SUBHOST}"
     out+=("--tag=${u}")
   done
-  echo "${out[@]}"
+  if [[ -n "${SUBHOST}" ]] && [[ -z "${out[@]}" ]]; then
+    echo "--tag=${SUBHOST}"
+  else
+    echo "${out[@]}"
+  fi
 }
 
 usage() {
