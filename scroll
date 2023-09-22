@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.1.6"
+VERSION="0.1.7"
 
 RCFILE="/etc/scroll/scroll.yaml"
 KEYFILE="/etc/scroll/key"
@@ -93,11 +93,11 @@ consume() {
   out=()
   for u in "${tags[@]}"; do
     u="${u}-backup"
-    [[ -n "${SUBHOST}" ]] && u="${u},${SUBHOST}"
+    [[ -n "${RCSUBHOST}" ]] && u="${u},${RCSUBHOST}"
     out+=("--tag=${u}")
   done
-  if [[ -n "${SUBHOST}" ]] && [[ -z "${out[@]}" ]]; then
-    echo "--tag=${SUBHOST}"
+  if [[ -n "${RCSUBHOST}" ]] && [[ -z "${out[@]}" ]]; then
+    echo "--tag=${RCSUBHOST}"
   else
     echo "${out[@]}"
   fi
@@ -142,7 +142,7 @@ cmd.find() {
   [[ -n "${tname}" ]] && shift
   [[ -n "${rname}" ]] && shift
   tags="$(consume "${tname}")"
-  eachrepo "${rname}" find --host="${HOST}" "${tags}" $@
+  eachrepo "${rname}" find "${RCHOST}" "${tags}" $@
 }
 sig.find() {
   echo "TARGET REPO PATH [PATH...]"
@@ -173,7 +173,7 @@ cmd.restore() {
     exit 1
   fi
   tags="$(consume "${tname}")"
-  perform "${rname}" restore --host="${HOST}" --target="${path}" "${tags}" latest $@
+  perform "${rname}" restore --host="${RCHOST}" --target="${path}" "${tags}" latest $@
 }
 sig.restore() {
   echo "TARGET REPO PATH"
@@ -235,7 +235,7 @@ cmd.list() {
   [[ -n "${tname}" ]] && shift
   [[ -n "${rname}" ]] && shift
   tags="$(consume "${tname}")"
-  eachrepo "${rname}" snapshots --host="${HOST}" "${tags}" $@
+  eachrepo "${rname}" snapshots "${RCHOST}" "${tags}" $@
 }
 sig.list() {
   echo "[TARGET] [REPO]"
@@ -310,6 +310,33 @@ help.help() {
 
 CMD="$1"
 shift 1
+
+RCHOST="${HOST}"
+RCSUBHOST="${SUBHOST}"
+
+PARSE="true"
+
+while [[ -n "${PARSE}" ]]; do
+  ARG="$1"
+  if [[ "${ARG}" =~ ^s: ]]; then
+    ARG="$(grep -Eo "[^:]+$" <<< "${ARG}")"
+    RCSUBHOST="${ARG}"
+    shift 1
+  elif [[ "${ARG}" =~ ^h: ]]; then
+    ARG="$(grep -Eo "[^:]+$" <<< "${ARG}")"
+    RCHOST="${ARG}"
+    shift 1
+  else
+    PARSE=
+  fi
+done
+
+if [[ "${RCHOST}" == "${WILD}" ]] || [[ -z "${RCHOST}" ]]; then
+  RCHOST=
+else
+  RCHOST="--host=${RCHOST}"
+fi
+[[ "${RCSUBHOST}" == "${WILD}" ]] && RCSUBHOST=
 
 FUNC="cmd.${CMD}"
 
