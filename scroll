@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.1.7"
+VERSION="0.1.8"
 
 RCFILE="/etc/scroll/scroll.yaml"
 KEYFILE="/etc/scroll/key"
@@ -313,23 +313,29 @@ shift 1
 
 RCHOST="${HOST}"
 RCSUBHOST="${SUBHOST}"
+RCSHGIVEN=
 
 PARSE="true"
 
 while [[ -n "${PARSE}" ]]; do
   ARG="$1"
-  if [[ "${ARG}" =~ ^s: ]]; then
-    ARG="$(grep -Eo "[^:]+$" <<< "${ARG}")"
-    RCSUBHOST="${ARG}"
-    shift 1
-  elif [[ "${ARG}" =~ ^h: ]]; then
+  if [[ "${ARG}" =~ ^h: ]]; then
     ARG="$(grep -Eo "[^:]+$" <<< "${ARG}")"
     RCHOST="${ARG}"
+    shift 1
+  elif [[ "${ARG}" =~ ^s: ]]; then
+    ARG="$(grep -Eo "[^:]+$" <<< "${ARG}")"
+    RCSUBHOST="${ARG}"
+    RCSHGIVEN="true"
     shift 1
   else
     PARSE=
   fi
 done
+
+if [[ -z "${RCSHGIVEN}" ]] && [[ "${RCHOST}" == "${WILD}" ]]; then
+  RCSUBHOST="${WILD}"
+fi
 
 if [[ "${RCHOST}" == "${WILD}" ]] || [[ -z "${RCHOST}" ]]; then
   RCHOST=
