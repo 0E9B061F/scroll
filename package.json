@@ -1,0 +1,15 @@
+{
+  "name": "scroll",
+  "version": "0.1.0",
+  "description": "Wrapper around restic",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "yaml": "^2.3.2"
+  }
+}
