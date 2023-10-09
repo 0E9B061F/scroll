@@ -1,19 +1,38 @@
 'use strict'
 
-const fs = require("fs")
-const process = require("process")
-const child_process = require("child_process")
-const os = require("os")
-const YAML = require("yaml")
-const Logger = require("./logger.js")
-const path = require("path")
-
+import fs from "node:fs"
+import process from "node:process"
+import child_process from "node:child_process"
+import os from "node:os"
+import YAML from "yaml"
+import Logger from "./logger.mjs"
+import path from "node:path"
+import byteSize from "byte-size"
 
 const rcfile = "/etc/scroll/scroll.yaml"
 const keyfile = "/etc/scroll/key"
 const logfile = "/var/log/scroll/scroll.log"
 const wild = "."
 const version = "0.2.0"
+
+class Target {
+  constructor(name, conf) {
+    conf = {
+      exclude: [],
+      ...conf
+    }
+    this.name = name
+    this.path = conf.path
+    if (typeof (this.path) === "string") {
+      this.path = [this.path]
+    }
+    this.exclude = conf.exclude
+    if (typeof (this.exclude) === "string") {
+      this.exclude = [this.exclude]
+    }
+    this.policy = conf.policy
+  }
+}
 
 const conf = {
   host: os.hostname(),
@@ -40,6 +59,9 @@ conf.rc = {
   ...YAML.parse(rcdata),
 }
 conf.subhost = conf.rc.subhost
+Object.entries(conf.rc.targets).forEach(target=> {
+  conf.rc.targets[target[0]] = new Target(target[0], target[1])
+})
 Object.keys(conf.rc.targets).forEach(name=> {
   const target = conf.rc.targets[name]
   if (conf.policies[target.policy]) conf.policies[target.policy].push({...target, name})
@@ -57,7 +79,7 @@ const spawn =(...args)=> {
     cwd: process.cwd(),
     env: process.env,
     stdio: 'inherit',
-    encoding: 'utf-8'
+    encoding: 'utf-8',
   })
 }
 
@@ -140,9 +162,9 @@ class Command {
       process.exit(1)
     }
   }
-  static run(name, ...args) {
+  static async run(name, ...args) {
     const cmd = this.resolve(name)
-    cmd.block(...args)
+    await cmd.block(...args)
   }
   static help(cmd) {
     if (iswild(cmd)) {
@@ -202,8 +224,9 @@ new Command("backup:b", {
     ]
     const tags = tagify(ttags)
     const path = conf.rc.targets[target].path
+    const exclude = conf.rc.targets[target].exclude.map(e=> `--exclude=${e}`)
     rnames.forEach(repo=> {
-      perform(repo, "backup", "--one-file-system", ...tags, path)
+      perform(repo, "backup", "--one-file-system", ...tags, ...path, ...exclude)
     })
   })
 })
@@ -273,26 +296,44 @@ new Command("check:c", {
   eachrepo(rname, "check", ...args)
 })
 
-const dirSize = (...dirs)=> {
+const dirSize = async (...dirs)=> {
+  let total = 0
+  let dir
+  for (let n = 0; n < dirs.length; n++) {
+    dir = dirs[n]
+    total += await fastFolderSizeAsync(dir)
+  }
+  return byteSize(total)
+}
+
+const getSize = (...dirs) => {
   let total = 0
   dirs.forEach(dir=> {
-    getFolderSize(dir, (err, size) => {
-      if (err) throw err
-      total += size=8 
-    });
+    if (process.platform == "linux") {
+      let out = child_process.spawnSync("du", ["-sbx", ...dirs], { encoding: "utf-8" }).stdout
+      out = out.trim().split("\n")
+      out = out[out.length - 1].match(/^\S+/)[0]
+      total += parseInt(out)
+    } else if (process.platform == "win32") {
+      console.log("unimplemented")
+      process.exit(1)
+    } else {
+      console.log("unsupported platform")
+      process.exit(1)
+    }
   })
-  return total / 1024 / 1024 / 1024
+  return total
 }
 
 new Command("size:s", {
-  sig: "",
-  info: "Calculate the total size of the configured targets.",
-}, ()=> {
-  // const paths = Object.entries(conf.rc.targets).map(e=> e[1].path)
-  // console.log(paths)
-  // const s = dirSize(...paths)
-  // console.log(s)
-  console.log("unimplemented")
+  sig: "[TARGET]",
+  info: "Calculate the total size of TARGET.",
+}, async (tname)=> {
+  const tnames = resolve("targets", tname)
+  const paths = tnames.map(t=> conf.rc.targets[t].path)
+  console.log(paths)
+  const s = getSize(...paths)
+  console.log(`${byteSize(s)}`)
 })
 
 new Command("x", {
@@ -317,7 +358,8 @@ new Command("targets", {
   info: "List all configured targets.",
 }, () => {
   const str = Object.entries(conf.rc.targets).map(repo => {
-    return `${repo[0]}: ${repo[1].path}\n`
+    const paths = repo[1].path.map(p=> `  ${p}`).join("\n")
+    return `${repo[0]}:\n${paths}\n`
   }).join("")
   console.log(str)
 })
@@ -325,14 +367,14 @@ new Command("targets", {
 new Command("show", {
   sig: "",
   info: "Show configuration details.",
-}, () => {
+}, async () => {
   console.log("REPOS:")
-  Command.run("repos")
+  await Command.run("repos")
   console.log("TARGETS:")
-  Command.run("targets")
+  await Command.run("targets")
 })
 
-const cli =(args)=> {
+const cli = async (args)=> {
   let acceptopt = true
   let cmd = null
   const re = /^([^:]+):(.*?)$/
@@ -355,10 +397,10 @@ const cli =(args)=> {
       out.push(arg)
     }
   })
-  Command.run(cmd, ...out)
+  await Command.run(cmd, ...out)
 }
 
 //perform("local", "snapshots")
 
 console.log(`scroll ${version}\n`)
-cli(process.argv.slice(2))
+await cli(process.argv.slice(2))

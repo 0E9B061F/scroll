@@ -1,9 +1,9 @@
 "use strict"
 
-const fs = require("fs")
+import fs from "node:fs"
 
 
-class Logger {
+export default class Logger {
   constructor(path, conf) {
     this.path = path
     this.user = conf.user
@@ -16,6 +16,3 @@ class Logger {
     this.file.write(`${date}${this.userstr}> ${msg}\n`)
   }
 }
-
-
-module.exports = Logger
