@@ -1,0 +1,9 @@
+repos:
+  local: ./data/repo
+targets:
+  test1:
+    path:
+    - ./data/target/dir1
+    - ./data/target/dir2
+    exclude: ./data/target/dir1/exc
+    policy: --keep-daily 7

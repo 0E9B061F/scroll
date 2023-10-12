@@ -1,18 +1,20 @@
 {
   "name": "scroll",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Wrapper around restic",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "byte-size": "^8.1.1",
-    "fast-folder-size": "^2.2.0",
+    "fs-extra": "^11.1.1",
+    "jasmine": "^5.1.0",
+    "uuid": "^9.0.1",
     "yaml": "^2.3.2"
   }
 }
