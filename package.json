@@ -1,9 +1,16 @@
 {
   "name": "scroll",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Wrapper around restic",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "scroll": "bin/scroll.mjs"
+  },
+  "files": [
+    "skel/**/*",
+    "lib/**/*"
+  ],
   "scripts": {
     "test": "jasmine"
   },
