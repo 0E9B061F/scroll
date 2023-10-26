@@ -1,12 +1,11 @@
 {
   "name": "scroll",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Wrapper around restic",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "test": "jasmine"
+    "test": "jasmine",
   },
   "author": "",
   "license": "ISC",
