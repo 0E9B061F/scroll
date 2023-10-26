@@ -9,7 +9,7 @@ const restore = path.join(root, "restore")
 
 describe("cli", ()=> {
   it("backup and restore with exclusions", async ()=> {
-    const conf = mkconf("rcfile:./spec/scroll.yaml", "keyfile:./spec/password", "logfile:./spec/log")
+    const conf = mkconf("rcfile:./spec/scroll.yaml", "keyfile:./spec/password", "logdir:./spec")
     const t = await prep()
 
     await conf.cmds.run("backup")

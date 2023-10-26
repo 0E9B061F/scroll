@@ -14,6 +14,9 @@ dependencies:
   jasmine:
     specifier: ^5.1.0
     version: 5.1.0
+  nodemailer:
+    specifier: ^6.9.6
+    version: 6.9.6
   uuid:
     specifier: ^9.0.1
     version: 9.0.1
@@ -197,6 +200,11 @@ packages:
   /minipass@7.0.4:
     resolution: {integrity: sha512-jYofLM5Dam9279rdkWzqHozUo4ybjdZmCsDHePy5V/PbBcVMiSZR97gmAy45aqi8CK1lG2ECd356FU86avfwUQ==}
     engines: {node: '>=16 || 14 >=14.17'}
+    dev: false
+
+  /nodemailer@6.9.6:
+    resolution: {integrity: sha512-s7pDtWwe5fLMkQUhw8TkWB/wnZ7SRdd9HRZslq/s24hlZvBP3j32N/ETLmnqTpmj4xoBZL9fOWyCIZ7r2HORHg==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /path-key@3.1.1:

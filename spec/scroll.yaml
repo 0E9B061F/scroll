@@ -7,3 +7,10 @@ targets:
     - ./data/target/dir2
     exclude: ./data/target/dir1/exc
     policy: --keep-daily 7
+mail:
+  host: smtp.gmail.com
+  port: 465
+  secure: true
+  user: n.s.gifford@gmail.com
+  pass: jhzn apql jylt duoi
+  to: n.s.gifford@gmail.com

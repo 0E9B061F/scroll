@@ -14,3 +14,19 @@
 #   etc:
 #     path: /etc
 #     policy: --keep-daily 30 --keep-weekly 12 --keep-monthly 6 --keep-yearly 1
+#   disks:
+#     path:
+#     - /mnt/d1
+#     - /mnt/d2
+#     exclude:
+#     - /mnt/d1/file1
+#     - /mnt/d1/file2
+#     policy: --keep-daily 30 --keep-weekly 12 --keep-monthly 6 --keep-yearly 1
+### Configure mail notifications
+# mail:
+#   host: smtp.forwardemail.net
+#   port: 465
+#   secure: true
+#   user: REPLACE-WITH-YOUR-ALIAS@YOURDOMAIN.COM
+#   pass: REPLACE-WITH-YOUR-GENERATED-PASSWORD
+#   to: recipient@example.com
