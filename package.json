@@ -1,6 +1,6 @@
 {
   "name": "scroll",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Wrapper around restic",
   "main": "index.js",
   "type": "module",
@@ -12,7 +12,7 @@
     "lib/**/*"
   ],
   "scripts": {
-    "preinstall": "node lib/init.mjs",
+    "postinstall": "node lib/init.mjs",
     "test": "jasmine"
   },
   "author": "",
