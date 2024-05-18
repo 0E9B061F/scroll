@@ -12,7 +12,6 @@
     "lib/**/*"
   ],
   "scripts": {
-    "postinstall": "node lib/init.mjs",
     "test": "jasmine"
   },
   "author": "",
