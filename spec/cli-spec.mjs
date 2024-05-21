@@ -1,28 +1,38 @@
 import { prep } from "./prep.mjs"
 import { mkconf } from "../lib/conf.mjs"
-import path from "node:path"
+import { dirname, join } from "node:path"
 import { fileURLToPath } from 'url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const root = path.join(__dirname, "data")
-const restore = path.join(root, "restore")
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const root = join(__dirname, "data")
+const restorea = join(root, "restore-a")
+const restoreb = join(root, "restore-b")
 
 describe("cli", ()=> {
+  jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
   it("backup and restore with exclusions", async ()=> {
     const conf = mkconf("rcfile:./spec/scroll.yaml", "keyfile:./spec/password", "logdir:./spec")
     const t = await prep()
 
-    await conf.cmds.run("backup")
-    await conf.cmds.run("restore", "test1", "local", restore)
+    await conf.cmds.run("backup", "test1", "repo-a,repo-b")
+    await conf.cmds.run("restore", "test1", "repo-a", restorea)
+    await conf.cmds.run("restore", "test1", "repo-b", restoreb)
 
-    const m = await t.match(path.join(restore, "home/nn/code/scroll2/spec/data/target"), {
+    const ra = join(restorea, "home/nn/code/scroll2/spec/data/target")
+    const rb = join(restoreb, "home/nn/code/scroll2/spec/data/target")
+    const md = {
       dir1: {
         exc: false,
       },
-      dir3: false,
-    })
+      dir5: false,
+      dir8: false,
+    }
 
-    expect(m).toEqual([])
+    const m1 = await t.match(ra, md)
+    const m2 = await t.match(rb, md)
+
+    expect(m1).toEqual([])
+    expect(m2).toEqual([])
   })
 })
 

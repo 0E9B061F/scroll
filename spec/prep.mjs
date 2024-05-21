@@ -1,18 +1,22 @@
 import child_process from "node:child_process"
-import fs from "fs-extra"
-import fsp from "node:fs/promises"
-import path from "node:path"
+import { existsSync } from "node:fs"
+import { mkdir, cp, rm, lstat, readFile, writeFile } from "node:fs/promises"
+import { dirname, join } from "node:path"
 import process from "node:process"
 import { v4 } from "uuid"
 
 import { fileURLToPath } from 'url';
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const pwfile = path.join(__dirname, "password")
-const root = path.join(__dirname, "data")
-const repo = path.join(root, "repo")
-const target = path.join(root, "target")
-const restore = path.join(root, "restore")
+const pwfile = join(__dirname, "password")
+const root = join(__dirname, "data")
+const repoa = join(root, "repo-a")
+const repob = join(root, "repo-b")
+const synca = join(root, "sync-a")
+const syncb = join(root, "sync-b")
+const target = join(root, "target")
+const restorea = join(root, "restore-a")
+const restoreb = join(root, "restore-b")
 
 const spawn =(cmd, ...args)=> {
   return child_process.spawnSync(cmd, args, {
@@ -26,13 +30,13 @@ const spawn =(cmd, ...args)=> {
 class Target {
   static async make(name, conf) {
     const t = new this(name, conf)
-    await fs.mkdirp(t.path)
+    await mkdir(t.path, {recursive: true})
     await t.create(t.conf)
     return t
   }
   constructor(name, conf) {
     this.name = name
-    this.path = path.join(root, this.name)
+    this.path = join(root, this.name)
     this.conf = conf
   }
   async create(dir, base=null) {
@@ -41,12 +45,12 @@ class Target {
     let pair
     for (let n = 0; n < pairs.length; n++) {
       pair = pairs[n]
-      const root = path.join(base, pair[0])
+      const root = join(base, pair[0])
       if (typeof(pair[1]) === "object") {
-        await fs.mkdirp(root)
+        await mkdir(root, {recursive: true})
         await this.create(pair[1], root)
       } else {
-        await fsp.writeFile(root, pair[1])
+        await writeFile(root, pair[1])
       }
     }
   }
@@ -58,21 +62,21 @@ class Target {
     let pair
     for (let n = 0; n < pairs.length; n++) {
       pair = pairs[n]
-      const orig = path.join(base, pair[0])
-      const other = path.join(root, pair[0])
+      const orig = join(base, pair[0])
+      const other = join(root, pair[0])
       if (exclude[pair[0]] === false) {
-        if (fs.existsSync(other)) failed.push(other)
+        if (existsSync(other)) failed.push(other)
       } else if (typeof(pair[1]) === "object") {
-        if (fs.existsSync(other) && (await fsp.lstat(other)).isDirectory()) {
+        if (existsSync(other) && (await lstat(other)).isDirectory()) {
           const out = await this.match(other, exclude[pair[0]] || {}, pair[1], orig)
           failed = [...failed, ...out]
         } else {
           failed.push(other)
         }
       } else {
-        if (fs.existsSync(other) && (await fsp.lstat(other)).isFile()) {
-          const a = await fsp.readFile(orig, {encoding: "utf-8"})
-          const b = await fsp.readFile(other, { encoding: "utf-8" })
+        if (existsSync(other) && (await lstat(other)).isFile()) {
+          const a = await readFile(orig, {encoding: "utf-8"})
+          const b = await readFile(other, { encoding: "utf-8" })
           if (a != b) failed.push(other)
         } else failed.push(other)
       }
@@ -87,36 +91,47 @@ const skel = {
     file2: v4(),
     file3: v4(),
     exc: {
-      file1: v4(),
+      file4: v4(),
     },
   },
   dir2: {
     fileA: v4(),
     fileB: v4(),
     fileC: v4(),
-    d3: {
-      filed1: v4(),
+    dir3: {
+      filedD: v4(),
     },
-    d4: {
-      filed2: v4(),
+    dir4: {
+      filedE: v4(),
     },
   },
-  dir3: {
-    fileZ: v4(),
-    d5: {
-      filed1: v4(),
+  dir5: {
+    fileF: v4(),
+    dir6: {
+      filedG: v4(),
     },
-    d6: {
-      filed2: v4(),
+    dir7: {
+      filedH: v4(),
+    },
+  },
+  dir8: {
+    fileI: v4(),
+    dir9: {
+      filedJ: v4(),
+      filedK: v4(),
     },
   },
 }
 
 export const prep = async ()=> {
-  await fs.remove(root)
-  await fs.mkdirp(root)
-  await fs.mkdirp(target)
-  await fs.mkdirp(restore)
-  spawn("restic", "init", "-r", repo, `--password-file=${pwfile}`)
+  await rm(root, {recursive: true})
+  await mkdir(root, {recursive: true})
+  await mkdir(target, {recursive: true})
+  await mkdir(restorea, {recursive: true})
+  await mkdir(restoreb, {recursive: true})
+  await mkdir(synca, {recursive: true})
+  await mkdir(syncb, {recursive: true})
+  spawn("restic", "init", "-r", repoa, `--password-file=${pwfile}`)
+  await cp(repoa, repob, {recursive: true})
   return await Target.make("target", skel)
 }
