@@ -1,8 +1,8 @@
 {
   "name": "scroll",
-  "version": "0.2.12",
-  "description": "Wrapper around restic",
-  "main": "index.js",
+  "version": "0.3.0",
+  "description": "Configurable backup system with rsync and restic backends",
+  "main": "bin/scroll.mjs",
   "type": "module",
   "bin": {
     "scroll": "bin/scroll.mjs"
@@ -14,14 +14,15 @@
   "scripts": {
     "test": "jasmine"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "0E9B061F",
+  "homepage": "https://github.com/0E9B061F/scroll",
+  "license": "MPL-2.0",
   "dependencies": {
-    "byte-size": "^8.1.1",
-    "fs-extra": "^11.1.1",
+    "nodemailer": "^6.9.13",
+    "yaml": "^2.4.2"
+  },
+  "devDependencies": {
     "jasmine": "^5.1.0",
-    "nodemailer": "^6.9.6",
-    "uuid": "^9.0.1",
-    "yaml": "^2.3.2"
+    "uuid": "^9.0.1"
   }
 }

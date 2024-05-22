@@ -1,12 +1,24 @@
-repos:
-  local: ./data/repo
+backends:
+  repo-a: ./data/repo-a
+  repo-b: snap::./data/repo-b
+  sync-a: sync::./data/sync-a
+  sync-b: sync::ssh://192.168.1.22:25000/tmp
 targets:
   test1:
     path:
-    - ./data/target/dir1
-    - ./data/target/dir2
+      - ./data/target/dir1
+      - ./data/target/dir2
     exclude: ./data/target/dir1/exc
     policy: --keep-daily 7
+  test2:
+    path: ./data/target/dir5
+  test3:
+    path: ./data/target/dir8
+plan:
+  - "backup test1 repo-a,repo-b"
+  - "backup test2 sync-a"
+  - "backup test3 sync-b"
+  - "trim . ."
 mail:
   host: smtp.gmail.com
   port: 465
