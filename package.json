@@ -1,6 +1,6 @@
 {
   "name": "scroll",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Configurable backup system with rsync and restic backends",
   "main": "bin/scroll.mjs",
   "type": "module",
