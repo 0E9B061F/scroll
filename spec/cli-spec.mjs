@@ -39,7 +39,7 @@ describe("cli", ()=> {
     expect(m1).toEqual([])
     expect(m2).toEqual([])
   })
-  it("can run backups to rsync backends", async()=> {
+  fit("can backup and restore from rsync backends", async()=> {
     const conf = mkconf("rcfile:./spec/scroll.yaml", "keyfile:./spec/password", "logdir:./spec")
     const t = await prep()
 
@@ -52,6 +52,17 @@ describe("cli", ()=> {
     })
 
     expect(m1).toEqual([])
+    
+    await conf.cmds.run("restore", "test2", "sync-a", restorea)
+    
+    const md = {
+      dir1: false,
+      dir2: false,
+      dir8: false,
+    }
+    
+    const m2 = await t.match(restorea, md)
+    expect(m2).toEqual([])
   })
 })
 
