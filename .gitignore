@@ -4,3 +4,4 @@ spec/*.log
 NOTES
 .vscode/
 *.tgz
+dev.yaml

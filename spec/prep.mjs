@@ -130,7 +130,11 @@ const skel = {
   },
 }
 
-export const prep = async ()=> {
+export const prep = async(conf={})=> {
+  conf = {
+    repos: false,
+    ...conf
+  }
   await rm(root, {recursive: true})
   await mkdir(root, {recursive: true})
   await mkdir(target, {recursive: true})
@@ -138,7 +142,9 @@ export const prep = async ()=> {
   await mkdir(restoreb, {recursive: true})
   await mkdir(synca, {recursive: true})
   await mkdir(syncb, {recursive: true})
-  spawn("restic", "init", "-r", repoa, `--password-file=${pwfile}`)
-  await cp(repoa, repob, {recursive: true})
+  if (conf.repos) {
+    spawn("restic", "init", "-r", repoa, `--password-file=${pwfile}`)
+    await cp(repoa, repob, {recursive: true})
+  }
   return await Target.make("target", skel)
 }

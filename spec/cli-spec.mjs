@@ -14,6 +14,7 @@ import { hostname } from "node:os"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, "data")
+const target = join(root, "target")
 const restorea = join(root, "restore-a")
 const restoreb = join(root, "restore-b")
 const synca = join(root, "sync-a")
@@ -25,14 +26,14 @@ describe("cli", ()=> {
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
   it("backup and restore from restic repos with exclusions", async ()=> {
     const conf = mkconf("rcfile:./spec/scroll.yaml", "keyfile:./spec/password", "logdir:./spec")
-    const t = await prep()
+    const t = await prep({repos: true})
 
     await conf.cmds.run("backup", "test1", "repo-a,repo-b")
     await conf.cmds.run("restore", "test1", "repo-a", restorea)
     await conf.cmds.run("restore", "test1", "repo-b", restoreb)
 
-    const ra = join(restorea, "home/nn/code/scroll2/spec/data/target")
-    const rb = join(restoreb, "home/nn/code/scroll2/spec/data/target")
+    const ra = join(restorea, target)
+    const rb = join(restoreb, target)
     const md = {
       dir1: {
         exc: false,

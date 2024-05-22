@@ -2,7 +2,7 @@ backends:
   repo-a: ./data/repo-a
   repo-b: snap::./data/repo-b
   sync-a: sync::./data/sync-a
-  sync-b: sync::ssh://192.168.1.22:25000/tmp
+  sync-b: sync::./data/sync-b
 targets:
   test1:
     path:
@@ -19,10 +19,3 @@ plan:
   - "backup test2 sync-a"
   - "backup test3 sync-b"
   - "trim . ."
-mail:
-  host: smtp.gmail.com
-  port: 465
-  secure: true
-  user: n.s.gifford@gmail.com
-  pass: jhzn apql jylt duoi
-  to: n.s.gifford@gmail.com
