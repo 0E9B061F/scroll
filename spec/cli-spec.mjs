@@ -1,3 +1,10 @@
+/* scroll backup system
+   by 0E9B061F <0E9B061F@protonmail.com> 2020-2024
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at https://mozilla.org/MPL/2.0/.
+*/
+
 import { prep } from "./prep.mjs"
 import { mkconf } from "../lib/conf.mjs"
 import { dirname, join } from "node:path"
@@ -39,7 +46,7 @@ describe("cli", ()=> {
     expect(m1).toEqual([])
     expect(m2).toEqual([])
   })
-  fit("can backup and restore from rsync backends", async()=> {
+  it("can backup and restore from rsync backends", async()=> {
     const conf = mkconf("rcfile:./spec/scroll.yaml", "keyfile:./spec/password", "logdir:./spec")
     const t = await prep()
 
