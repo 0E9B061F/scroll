@@ -1,5 +1,6 @@
-# 📜 **scroll** backup system v0.4.2 'House Absolute'
+# 📜 **scroll** backup system v0.4.3 'House Absolute'
 [![Version][icon-ver]][repo]
+[![Series][icon-ser]][gh]
 [![License][icon-lic]][license]
 [![NPM][icon-npm]][pkg]
 
@@ -280,5 +281,6 @@ Available under the terms of the [Mozilla Public License Version 2.0][license].
 [rsync]:https://github.com/RsyncProject/rsync
 
 [icon-ver]:https://img.shields.io/github/package-json/v/0E9B061F/scroll.svg?style=flat-square&logo=github&color=%236e7fd2
+[icon-ser]:https://img.shields.io/badge/dynamic/json?color=%236e7fd2&label=series&prefix=%27&query=series&suffix=%27&url=https%3A%2F%2Fraw.githubusercontent.com%2F0E9B061F%2Fscroll%2Fmaster%2Fpackage.json&style=flat-square
 [icon-lic]:https://img.shields.io/github/license/0E9B061F/scroll.svg?style=flat-square&color=%236e7fd2
 [icon-npm]:https://img.shields.io/npm/v/scroll-backup.svg?style=flat-square&logo=npm&color=%23de2657
