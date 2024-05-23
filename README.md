@@ -30,8 +30,37 @@ scroll backup docs,art remote
 To restore a target (`docs`) from a backend (`remote`) to a local path (`/`):
 
 ```sh
-# Dots are wildcards
 scroll restore docs remote /
+```
+
+To trim all targets in all restic backends according to the policy of each target:
+
+```sh
+scroll trim . .
+```
+
+The list command lists snapshots in restic backends:
+
+```sh
+scroll list . remote         # List all snapshots for this host in `remote`
+scroll host:. ls . remote    # List all snapshots for all hosts in `remote`
+scroll h:Corinth ls . remote # List all snapshots for another host in `remote`
+```
+
+More example commands:
+
+```sh
+# Create frozen snapshots that will be ignored by the `trim` command:
+scroll freeze docs local docs-phase-1
+scroll frozen . . # List all frozen snapshots
+# Run a plan (compound preconfigured commands defined in the configuration file):
+scroll plan weekly
+# Find all snapshots containing a given path:
+scroll find art remote /home/user/art/sketch/2024-01-23.png
+# Check the integrity of all restic backends:
+scroll check .
+# Remove a stale lock:
+scroll unlock local
 ```
 
 ## Installation
