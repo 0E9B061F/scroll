@@ -6,12 +6,7 @@
 **scroll** is a configurable backup system with support for multiple backends. It features:
 
 * **[restic][restic]** support
-  * Automatic tagging allows multiple targets from multiple hosts to coexist in a single repository
-  * Backup to multiple repositories in a single command
-  * An efficient trimming strategy that runs once per policy
-  * `freeze` command creates snapshots that the `trim` command will ignore
 * **[rsync][rsync]** support
-  * Automatic `HOST/TARGETNAME` directory structure for rsync backends, allowing multiple targets from multiple hosts to coexist in a single location
 * Configurable compound commands called **plans**
 * Support for **email reports**
 * scroll is **multi-platform**. Currently tested under Linux and Windows.
@@ -38,6 +33,42 @@ To restore a target (`docs`) from a backend (`remote`) to a local path (`/`):
 # Dots are wildcards
 scroll restore docs remote /
 ```
+
+## Installation
+
+```sh
+npm install -g scroll-backup
+```
+
+**NB:** on **Windows**, first run `scroll init` after installation.
+
+After installation, edit your config file and key file, if you plan to use restic backends. 
+
+### Config File
+
+* Linux: `/etc/scroll/scroll.yaml`
+* Windows `%ALLUSERSPROFILE%\scroll\scroll.yaml`
+
+Read more about this file and see a commented example in the Configuration section below.
+
+### Key File
+
+* Linux: `/etc/scroll/key`
+* Windows `%ALLUSERSPROFILE%\scroll\key`
+
+Place the password used to encrypt and decrypt your restic repos here.
+
+## Scheduling
+
+Note that **scroll** currently has no built-in scheduling; to run backup operations automatically you'll need to use whatever facilities your system provides for that (cron, systemd timers, Windows' Task Scheduler). In the future **scroll** may provide a scheduling daemon to be more system-agnostic.
+
+# Configuration
+
+Scroll is configured using YAML.
+
+* Under Linux, the default configuration file is located at `/etc/scroll/scroll.yaml`
+* Under Windows its path is `%ALLUSERSPROFILE%\scroll\scroll.yaml`<br/>
+  (typically `C:\ProgramData\scroll\scroll.yaml`)
 
 ## Backends
 
@@ -85,17 +116,7 @@ backends:
   remote-b: sync::ssh://user@host.com:9999/backups/sync
 ```
 
-## Scheduling
-
-Note that **scroll** currently has no built-in scheduling; to run backup operations automatically you'll need to use whatever facilities your system provides for that (cron, systemd timers, Windows' Task Scheduler). In the future **scroll** may provide a scheduling daemon to be more system-agnostic.
-
-# Configuration
-
-Scroll is configured using YAML.
-
-* Under Linux, the default configuration file is located at `/etc/scroll/scroll.yaml`
-* Under Windows its path is `%ALLUSERSPROFILE%\scroll\scroll.yaml`<br/>
-  (typically `C:\ProgramData\scroll\scroll.yaml`).
+## Example Configuration
 
 Below is an example configuration with commentary:
 
@@ -218,7 +239,7 @@ Send a report if mailing is configured.
 
 # License
 
-Copyright 2024 **[0E9B061F][gh]**<br/>
+Copyright 2020-2024 **[0E9B061F][gh]**<br/>
 Available under the terms of the [Mozilla Public License Version 2.0][license].
 
 
