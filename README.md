@@ -5,11 +5,11 @@
 
 **scroll** is a configurable backup system with support for [restic][restic] and [rsync][rsync] backends. It features:
 * Configurable compound commands called **plans**
-* Backups to multiple `restic` backends in a single command
-* **Frozen** `restic` snapshots that will never be pruned by the `trim` command
-* An efficient trimming strategy for `restic` backends
-* Automatic **tagging** to allow multiple targets from multiple hosts to coexist in a single `restic` repository
-* Automatic `HOST/TARGETNAME` directory structure for `rsync` backends, allowing multiple targets from multiple hosts to coexist in a single location
+* Backups to multiple restic backends in a single command
+* **Frozen** restic snapshots that will never be pruned by the `trim` command
+* An efficient trimming strategy for restic backends
+* Automatic **tagging** to allow multiple targets from multiple hosts to coexist in a single restic repository
+* Automatic `HOST/TARGETNAME` directory structure for rsync backends, allowing multiple targets from multiple hosts to coexist in a single location
 * Support for **email reports**
 * scroll is **multi-platform**. Currently tested under Linux and Windows.
 
@@ -42,33 +42,50 @@ Note that **scroll** currently has no built-in scheduling; to run backup operati
 
 # Configuration
 
-Scroll is configured using YAML. Under Linux, the default configuration file location is `/etc/scroll/scroll.yaml`.
+Scroll is configured using YAML. Under Linux, the default configuration file is located at `/etc/scroll/scroll.yaml`. Under Windows its path is `%ALLUSERSPROFILE%\scroll\scroll.yaml` (typically `C:\ProgramData\scroll\scroll.yaml`).
 
-Below is an example configuration:
+Below is an example configuration with commentary:
 
 ```yaml
+# Backups are named locations that store backups.
 backends:
-  repo-a: ./data/repo-a
-  repo-b: snap::./data/repo-b
-  sync-a: sync::./data/sync-a
-  sync-b: sync::./data/sync-b
+  # By default, scroll uses restic backends. These may use any path or URL
+  # supported by restic.
+  local: /backups/scroll/repo
+  remote: rest:http://nn:axiom@0x2764.com:3333/ArkadyIV/repo
+  # Using the `MODE::` syntax, you can specify the backend type.
+  # `sync::` is used here to create rsync backends:
+  local-sync: sync::/backups/scroll/sync
+  remote-sync: sync::ssh://nn@0x2764.com:7777/backups/scroll/sync
+# Targets are named locations to be backed up.
 targets:
-  test1:
+  docs:
+    # A target may include multiple paths:
     path:
-      - ./data/target/dir1
-      - ./data/target/dir2
-    exclude: ./data/target/dir1/exc
+      - /home/nn/docs
+      - /home/nn/records
+    # Paths may be excluded from the target:
+    exclude: /home/nn/docs/temp
     policy: --keep-daily 7
-  test2:
-    path: ./data/target/dir5
-  test3:
-    path: ./data/target/dir8
+  art:
+    path: /home/nn/art
+    # Policies are used with restic backends to control how many snapshots are
+    # kept when the `trim` command is run.
+    policy: --keep-daily 7
+  movies:
+    # If you don't plan to store a target in any restic backend, you don't need
+    # to specify any trim policy.
+    path: /home/nn/movies
+  music:
+    path: /home/nn/music
+# Plans are configurable compound commands, allowing you to run multiple scroll
+# commands as one, or to configure arguments to single commands:
 plan:
-  - "backup test1 repo-a,repo-b"
-  - "backup test2 sync-a"
-  - "backup test3 sync-b"
-  - "trim . ."
-
+  main:
+    - "backup docs,art local,remote"
+    - "backup music local-sync,remote-sync"
+  weekly:
+    - "backup movies local-sync,remote-sync"
 ```
 
 # Commands
@@ -142,6 +159,12 @@ Show configuration details.
 **`report [LONG]`**
 
 Send a report if mailing is configured.
+
+# License
+
+Copyright 2024 **[0E9B061F][gh]**<br/>
+Available under the terms of the [Mozilla Public License Version 2.0.][license]
+
 
 [gh]:https://github.com/0E9B061F
 [repo]:https://github.com/0E9B061F/scroll
