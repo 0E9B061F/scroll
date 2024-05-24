@@ -1,6 +1,6 @@
 # 📜 **scroll** backup system v0.4.5 'HOUSE ABSOLUTE'
 [![Version][icon-ver]][repo]
-[![Series][icon-ser]][gh]
+[![Series][icon-ser]][repo]
 [![License][icon-lic]][license]
 [![NPM][icon-npm]][pkg]
 
