@@ -1,6 +1,7 @@
 {
   "name": "scroll-backup",
-  "version": "0.4.4",
+  "version": "0.4.5",
+  "series": "HOUSE ABSOLUTE",
   "description": "Configurable backup system with rsync and restic backends",
   "main": "bin/scroll.mjs",
   "type": "module",
@@ -24,6 +25,5 @@
   "devDependencies": {
     "jasmine": "^5.1.0",
     "uuid": "^9.0.1"
-  },
-  "series": "House Absolute"
+  }
 }

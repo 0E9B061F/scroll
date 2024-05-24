@@ -25,7 +25,7 @@ const vinfo = execSync(`git --git-dir=${__dirname}/../.git tag -l "v*"`, {
 let vers = [...vinfo.split("\n").filter(v=> !!v), ver]
 vers = [...new Set(vers.map(v=> v.split('.').slice(0,-1).join('.')))]
 console.log(vers)
-const name = series[vers.length-1]
+const name = series[vers.length-1].toUpperCase()
 
 const code = `${ver} '${name}'`
 const line = `# 📜 **scroll** backup system ${code}`

@@ -1,4 +1,4 @@
-# 📜 **scroll** backup system v0.4.4 'House Absolute'
+# 📜 **scroll** backup system v0.4.5 'HOUSE ABSOLUTE'
 [![Version][icon-ver]][repo]
 [![Series][icon-ser]][gh]
 [![License][icon-lic]][license]
@@ -276,7 +276,7 @@ Available under the terms of the [Mozilla Public License Version 2.0][license].
 [gh]:https://github.com/0E9B061F
 [repo]:https://github.com/0E9B061F/scroll
 [license]:https://github.com/0E9B061F/scroll/blob/master/LICENSE
-[pkg]:https://www.npmjs.com/package/scroll
+[pkg]:https://www.npmjs.com/package/scroll-backup
 [restic]:https://github.com/restic/restic
 [rsync]:https://github.com/RsyncProject/rsync
 
