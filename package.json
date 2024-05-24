@@ -1,23 +1,43 @@
 {
   "name": "scroll-backup",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "series": "HOUSE ABSOLUTE",
   "description": "Configurable backup system with rsync and restic backends",
-  "main": "bin/scroll.mjs",
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/0E9B061F/scroll",
+  "bugs": "https://github.com/0E9B061F/scroll/issues",
+  "repository": "github:0E9B061F/scroll",
+  "author": {
+    "name": "0E9B061F",
+    "email": "0E9B061F@protonmail.com",
+    "url": "https://github.com/0E9B061F"
+  },
   "type": "module",
-  "bin": {
-    "scroll": "bin/scroll.mjs"
+  "main": "bin/scroll.mjs",
+  "directories": {
+    "lib": "lib",
+    "test": "spec"
   },
   "files": [
     "skel/**/*",
     "lib/**/*"
   ],
+  "bin": {
+    "scroll": "bin/scroll.mjs"
+  },
   "scripts": {
     "test": "jasmine"
   },
-  "author": "0E9B061F",
-  "homepage": "https://github.com/0E9B061F/scroll",
-  "license": "MPL-2.0",
+  "keywords": [
+    "backup",
+    "backups",
+    "back up",
+    "restic",
+    "rsync",
+    "system",
+    "cli",
+    "snaphot"
+  ],
   "dependencies": {
     "nodemailer": "^6.9.13",
     "yaml": "^2.4.2"
