@@ -276,7 +276,7 @@ Available under the terms of the [Mozilla Public License Version 2.0][license].
 
 [gh]:https://github.com/0E9B061F
 [repo]:https://github.com/0E9B061F/scroll
-[commits]:https://github.com/0E9B061F/scroll/commits/main
+[commits]:https://github.com/0E9B061F/scroll/commits/master
 [license]:https://github.com/0E9B061F/scroll/blob/master/LICENSE
 [pkg]:https://www.npmjs.com/package/scroll-backup
 [restic]:https://github.com/restic/restic
