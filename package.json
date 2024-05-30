@@ -1,7 +1,12 @@
 {
   "name": "scroll-backup",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "series": "HOUSE ABSOLUTE",
+  "mkv": {
+    "before": ":scroll:",
+    "name": "scroll",
+    "after": "backup system"
+  },
   "description": "Configurable backup system with rsync and restic backends",
   "license": "MPL-2.0",
   "homepage": "https://github.com/0E9B061F/scroll",
@@ -29,7 +34,8 @@
     "scroll": "bin/scroll.mjs"
   },
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "mkv": "mkv"
   },
   "keywords": [
     "backup",
@@ -46,6 +52,7 @@
     "yaml": "^2.4.2"
   },
   "devDependencies": {
+    "@0e9b061f/mkv": "^0.1.0",
     "jasmine": "^5.1.0",
     "uuid": "^9.0.1"
   }

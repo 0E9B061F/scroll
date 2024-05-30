@@ -15,6 +15,9 @@ importers:
         specifier: ^2.4.2
         version: 2.4.2
     devDependencies:
+      '@0e9b061f/mkv':
+        specifier: ^0.1.0
+        version: 0.1.0
       jasmine:
         specifier: ^5.1.0
         version: 5.1.0
@@ -23,6 +26,10 @@ importers:
         version: 9.0.1
 
 packages:
+
+  '@0e9b061f/mkv@0.1.0':
+    resolution: {integrity: sha512-IXKd8ZsZk3Ur45w3IzNRfrMZNZIsOamnmeXiWlIRIZQ62x8n0JMd0h4KiWJvv0ilfEYo6AD0nC3WDMofLyt8PQ==}
+    hasBin: true
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -176,6 +183,8 @@ packages:
     hasBin: true
 
 snapshots:
+
+  '@0e9b061f/mkv@0.1.0': {}
 
   '@isaacs/cliui@8.0.2':
     dependencies:
