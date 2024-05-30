@@ -2,6 +2,7 @@
 [![Version][icon-ver]][repo]
 [![Series][icon-ser]][repo]
 [![License][icon-lic]][license]
+[![Maintenance][icon-mnt]][commits]<br/>
 [![NPM][icon-npm]][pkg]
 
 **scroll** is a configurable backup system with support for multiple backends. It features:
@@ -275,6 +276,7 @@ Available under the terms of the [Mozilla Public License Version 2.0][license].
 
 [gh]:https://github.com/0E9B061F
 [repo]:https://github.com/0E9B061F/scroll
+[commits]:https://github.com/0E9B061F/scroll/commits/main
 [license]:https://github.com/0E9B061F/scroll/blob/master/LICENSE
 [pkg]:https://www.npmjs.com/package/scroll-backup
 [restic]:https://github.com/restic/restic
@@ -284,3 +286,4 @@ Available under the terms of the [Mozilla Public License Version 2.0][license].
 [icon-ser]:https://img.shields.io/badge/dynamic/json?color=%236e7fd2&label=series&prefix=%27&query=series&suffix=%27&url=https%3A%2F%2Fraw.githubusercontent.com%2F0E9B061F%2Fscroll%2Fmaster%2Fpackage.json&style=flat-square
 [icon-lic]:https://img.shields.io/github/license/0E9B061F/scroll.svg?style=flat-square&color=%236e7fd2
 [icon-npm]:https://img.shields.io/npm/v/scroll-backup.svg?style=flat-square&logo=npm&color=%23de2657
+[icon-mnt]:https://img.shields.io/maintenance/yes/2024.svg?style=flat-square
