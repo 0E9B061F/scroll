@@ -135,6 +135,7 @@ export const prep = async(conf={})=> {
     repos: false,
     ...conf
   }
+  console.log(root)
   await rm(root, {recursive: true})
   await mkdir(root, {recursive: true})
   await mkdir(target, {recursive: true})

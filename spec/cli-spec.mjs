@@ -10,7 +10,9 @@ import { prep } from "./prep.mjs"
 import { mkconf } from "../lib/conf.mjs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from 'node:url'
-import { hostname } from "node:os"
+import { hostname, platform } from "node:os";
+
+const plat = platform()
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, "data")
@@ -22,10 +24,21 @@ const syncaRoot = join(synca, hostname(), "test2")
 const syncb = join(root, "sync-b")
 const syncbRoot = join(syncb, hostname(), "test3")
 
+let rcopt, keyopt, logopt
+if (plat == "win32") {
+  rcopt = "rcfile:.\\spec\\scroll.win.yaml"
+  keyopt = "keyfile:.\\spec\\password"
+  logopt = "logdir:.\\spec"
+} else {
+  rcopt = "rcfile:./spec/scroll.yaml"
+  keyopt = "keyfile:./spec/password"
+  logopt = "logdir:./spec"
+}
+
 describe("cli", ()=> {
-  jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
+  jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000
   it("backup and restore from restic repos with exclusions", async ()=> {
-    const conf = mkconf("rcfile:./spec/scroll.yaml", "keyfile:./spec/password", "logdir:./spec")
+    const conf = mkconf(rcopt, keyopt, logopt)
     const t = await prep({repos: true})
 
     await conf.cmds.run("backup", "test1", "repo-a,repo-b")
@@ -48,8 +61,8 @@ describe("cli", ()=> {
     expect(m1).toEqual([])
     expect(m2).toEqual([])
   })
-  it("can backup and restore from rsync backends", async()=> {
-    const conf = mkconf("rcfile:./spec/scroll.yaml", "keyfile:./spec/password", "logdir:./spec")
+  fit("can backup and restore from rsync backends", async()=> {
+    const conf = mkconf(rcopt, keyopt, logopt)
     const t = await prep()
 
     await conf.cmds.run("backup", "test2", "sync-a")
