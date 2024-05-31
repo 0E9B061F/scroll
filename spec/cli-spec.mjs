@@ -61,7 +61,7 @@ describe("cli", ()=> {
     expect(m1).toEqual([])
     expect(m2).toEqual([])
   })
-  fit("can backup and restore from rsync backends", async()=> {
+  it("can backup and restore from rsync backends", async()=> {
     const conf = mkconf(rcopt, keyopt, logopt)
     const t = await prep()
 
