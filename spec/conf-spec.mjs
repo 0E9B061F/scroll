@@ -10,6 +10,9 @@ import { defaults } from "../lib/conf.mjs"
 import { Backend } from "../lib/conf.mjs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
+import { platform } from "node:os"
+
+const plat = platform()
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const bename = "test"
@@ -36,13 +39,23 @@ const expectLocal =async(conf)=> {
 
 describe("Backend", ()=> {
   it("should parse absolute and relative local paths", async()=> {
-    const abs = "/tmp/repo"
-    const rel = "./foo/repo"
-    const rab = join(__dirname, rel)
-    let be = new Backend(__dirname, bename, abs)
-    expectLocal({be, path: abs})
-    be = new Backend(__dirname, "test", rel)
-    expectLocal({be, path: rab})
+    if (plat == "win32") {
+      const abs = "C:\\tmp\\repo";
+      const rel = ".\\foo\\repo";
+      const rab = join(__dirname, rel);
+      let be = new Backend(__dirname, bename, abs);
+      expectLocal({ be, path: abs });
+      be = new Backend(__dirname, "test", rel);
+      expectLocal({ be, path: rab });
+    } else {
+      const abs = "/tmp/repo"
+      const rel = "./foo/repo"
+      const rab = join(__dirname, rel)
+      let be = new Backend(__dirname, bename, abs)
+      expectLocal({be, path: abs})
+      be = new Backend(__dirname, "test", rel)
+      expectLocal({be, path: rab})
+    }
   })
   it("should parse remote paths for restic", async()=> {
     const rp = "rest:http://kingno3:noble%20axiom@example.com:33333/example/scroll"
@@ -76,8 +89,14 @@ describe("Backend", ()=> {
     expectRemote({be, mode: "sync", path: spr})
   })
   it("should parse modes from all urls", async()=> {
-    const abs = "/tmp/repo"
-    const rel = "./foo/repo"
+    let abs, rel
+    if (plat == "win32") {
+      abs = "C:\\tmp\\repo";
+      rel = ".\\foo\\repo";
+    } else {
+      abs = "/tmp/repo"
+      rel = "./foo/repo"
+    }
     const rab = join(__dirname, rel)
     let be = new Backend(__dirname, bename, `snap::${abs}`)
     expectLocal({be, path: abs})
