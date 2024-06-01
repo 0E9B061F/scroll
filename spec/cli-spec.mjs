@@ -45,8 +45,15 @@ describe("cli", ()=> {
     await conf.cmds.run("restore", "test1", "repo-a", restorea)
     await conf.cmds.run("restore", "test1", "repo-b", restoreb)
 
-    const ra = join(restorea, target)
-    const rb = join(restoreb, target)
+    let ra, rb
+    if (plat == "win32") {
+      const t = target.replace(/^([a-zA-Z]):\\/, "$1\\")
+      ra = join(restorea, t)
+      rb = join(restoreb, t)
+    } else {
+      ra = join(restorea, target)
+      rb = join(restoreb, target)
+    }
     const md = {
       dir1: {
         exc: false,
