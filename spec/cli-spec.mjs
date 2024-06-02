@@ -24,6 +24,16 @@ const syncaRoot = join(synca, hostname(), "test2")
 const syncb = join(root, "sync-b")
 const syncbRoot = join(syncb, hostname(), "test3")
 
+let t = target
+if (plat == "win32") {
+  t = t.replace(/^([a-zA-Z]):\\/, "$1\\")
+}
+
+const ra = join(restorea, t)
+const rb = join(restoreb, t)
+const sa = join(syncaRoot, t)
+
+
 let rcopt, keyopt, logopt
 if (plat == "win32") {
   rcopt = "rcfile:.\\spec\\scroll.win.yaml"
@@ -45,15 +55,6 @@ describe("cli", ()=> {
     await conf.cmds.run("restore", "test1", "repo-a", restorea)
     await conf.cmds.run("restore", "test1", "repo-b", restoreb)
 
-    let ra, rb
-    if (plat == "win32") {
-      const t = target.replace(/^([a-zA-Z]):\\/, "$1\\")
-      ra = join(restorea, t)
-      rb = join(restoreb, t)
-    } else {
-      ra = join(restorea, target)
-      rb = join(restoreb, target)
-    }
     const md = {
       dir1: {
         exc: false,
@@ -72,25 +73,20 @@ describe("cli", ()=> {
     const conf = mkconf(rcopt, keyopt, logopt)
     const t = await prep()
 
-    await conf.cmds.run("backup", "test2", "sync-a")
-
-    const m1 = await t.match(syncaRoot, {
-      dir1: false,
-      dir2: false,
-      dir8: false,
-    })
-
-    expect(m1).toEqual([])
-    
-    await conf.cmds.run("restore", "test2", "sync-a", restorea)
-    
     const md = {
       dir1: false,
       dir2: false,
       dir8: false,
     }
+
+    await conf.cmds.run("backup", "test2", "sync-a")
+
+    const m1 = await t.match(sa, md)
+    expect(m1).toEqual([])
     
-    const m2 = await t.match(restorea, md)
+    await conf.cmds.run("restore", "test2", "sync-a", restorea)
+    
+    const m2 = await t.match(ra, md)
     expect(m2).toEqual([])
   })
 })
