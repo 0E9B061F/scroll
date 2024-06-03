@@ -1,6 +1,6 @@
 {
   "name": "scroll-backup",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "series": "TERMINUS EST",
   "mkv": {
     "before": ":scroll:",

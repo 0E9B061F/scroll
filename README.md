@@ -1,4 +1,4 @@
-# :scroll: **scroll** backup system v0.5.1 'TERMINUS EST'
+# :scroll: **scroll** backup system v0.5.2 'TERMINUS EST'
 [![Version][icon-ver]][repo]
 [![Series][icon-ser]][repo]
 [![License][icon-lic]][license]
@@ -9,6 +9,7 @@
 
 * **[restic][restic]** support
 * **[rsync][rsync]** support
+* **[robocopy][robocopy]** support for Windows
 * Configurable compound commands called **plans**
 * Support for **email reports**
 * scroll is **multi-platform**. Currently tested under Linux and Windows.
@@ -103,7 +104,7 @@ Scroll is configured using YAML.
 
 ## Backends
 
-Backends are locations where backups are stored. **scroll** supports multiple backend types; currently these are restic and rsync. When performing backup and restore operations the backend type determines which tool will be used.
+Backends are locations where backups are stored. **scroll** supports multiple backend types; currently these are `snap` backends which use restic and `sync` backends. `sync` backends use rsync where available and robocopy under windows. When performing backup and restore operations the backend type determines which tool will be used.
 
 ### Type Syntax
 
@@ -117,7 +118,7 @@ backends:
 Valid types are:
 
 * `snap`: A restic backend. This is the default type if none is given.
-* `sync`: An rsync backend.
+* `sync`: An rsync/robocopy backend.
 
 ### restic
 
@@ -136,7 +137,7 @@ backends:
 
 ### rsync
 
-rsync backends are specified with the `sync` type. Configuration example:
+rsync/robocopy backends are specified with the `sync` type. Configuration example:
 
 ```yaml
 backends:
@@ -281,6 +282,7 @@ Available under the terms of the [Mozilla Public License Version 2.0][license].
 [pkg]:https://www.npmjs.com/package/scroll-backup
 [restic]:https://github.com/restic/restic
 [rsync]:https://github.com/RsyncProject/rsync
+[robocopy]:https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy
 
 [icon-ver]:https://img.shields.io/github/package-json/v/0E9B061F/scroll.svg?style=flat-square&logo=github&color=%236e7fd2
 [icon-ser]:https://img.shields.io/badge/dynamic/json?color=%236e7fd2&label=series&prefix=%27&query=series&suffix=%27&url=https%3A%2F%2Fraw.githubusercontent.com%2F0E9B061F%2Fscroll%2Fmaster%2Fpackage.json&style=flat-square
