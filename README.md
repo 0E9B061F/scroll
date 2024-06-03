@@ -1,4 +1,4 @@
-# :scroll: **scroll** backup system v0.5.0 'TERMINUS EST'
+# :scroll: **scroll** backup system v0.5.1 'TERMINUS EST'
 [![Version][icon-ver]][repo]
 [![Series][icon-ser]][repo]
 [![License][icon-lic]][license]
