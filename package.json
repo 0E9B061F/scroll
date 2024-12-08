@@ -1,7 +1,7 @@
 {
   "name": "scroll-backup",
-  "version": "0.5.2",
-  "series": "TERMINUS EST",
+  "version": "0.6.0",
+  "series": "HIEROGRAMMATE",
   "mkv": {
     "before": ":scroll:",
     "name": "scroll",
@@ -48,7 +48,7 @@
     "snaphot"
   ],
   "dependencies": {
-    "nodemailer": "^6.9.13",
+    "@0e9b061f/logmailer": "^1.1.0",
     "yaml": "^2.4.2"
   },
   "devDependencies": {

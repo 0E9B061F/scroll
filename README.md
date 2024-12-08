@@ -1,4 +1,4 @@
-# :scroll: **scroll** backup system v0.5.2 'TERMINUS EST'
+# :scroll: **scroll** backup system v0.6.0 'HIEROGRAMMATE'
 [![Version][icon-ver]][repo]
 [![Series][icon-ser]][repo]
 [![License][icon-lic]][license]
