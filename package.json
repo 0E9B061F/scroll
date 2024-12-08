@@ -1,6 +1,6 @@
 {
   "name": "scroll-backup",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "series": "HIEROGRAMMATE",
   "mkv": {
     "before": ":scroll:",

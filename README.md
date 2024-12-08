@@ -1,4 +1,4 @@
-# :scroll: **scroll** backup system v0.6.0 'HIEROGRAMMATE'
+# :scroll: **scroll** backup system v0.6.1 'HIEROGRAMMATE'
 [![Version][icon-ver]][repo]
 [![Series][icon-ser]][repo]
 [![License][icon-lic]][license]
